@@ -1,0 +1,49 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{amsmath} % Added for math equation support
+\usepackage{titling}
+\usepackage[hidelinks]{hyperref}
+% \usepackage[style=authoryear]{biblatex} % Use biber backend
+% \addbibresource{../../paper.bib} % Specify the .bib file
+
+\geometry{margin=0.5in}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.5em}{}
+
+% title context and style setting
+\title{周报-向嘉豪(2024-11-11)}
+\setlength{\droptitle}{-6em} % Reduce space begin the title
+% Redefine \maketitle to display only the title
+\renewcommand{\maketitle}{
+  \begin{center}
+    \LARGE\bfseries\thetitle
+  \end{center}
+}
+
+\begin{document}
+
+\maketitle
+
+
+% Custom Abstract
+\noindent \textbf{Abstract}: 本周主要工作为线性层部分重写。
+
+
+\section{线性层部分重写}
+
+为了学习对线性层优化的写作手法，我们对\cite{Leurent2024}进行学习，由于\cite{Leurent2024}对其线性层的描述过于简洁，因此我们结合其提供的源代码对其进行学习。
+
+\subsection{学习\cite{Leurent2024}源码}
+
+
+
+
+% Include the bibliography
+\bibliographystyle{alpha}
+\bibliography{../../paper}
+
+\end{document}
