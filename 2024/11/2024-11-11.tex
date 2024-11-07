@@ -10,7 +10,10 @@
 \usepackage[hidelinks]{hyperref}
 % \usepackage[style=authoryear]{biblatex} % Use biber backend
 % \addbibresource{../../paper.bib} % Specify the .bib file
-
+% Define \lll
+\newcommand{\lll}{\mathrel{<\!\!<\!\!<}}
+% Define \ggg
+\newcommand{\ggg}{\mathrel{>\!\!>\!\!>}}
 \geometry{margin=0.5in}
 \titleformat{\section}{\large\bfseries}{\thesection}{0.5em}{}
 
@@ -35,12 +38,25 @@
 
 \section{线性层部分重写}
 
-为了学习对线性层优化的写作手法，我们对\cite{Leurent2024}进行学习，由于\cite{Leurent2024}对其线性层的描述过于简洁，因此我们结合其提供的源代码对其进行学习。
+为了深入理解线性层的优化方法，我们研究了\cite{Leurent2024}。由于\cite{Leurent2024}中对线性层的描述较为简略，我们结合其提供的源代码进行了详细分析。
 
 \subsection{学习\cite{Leurent2024}源码}
 
+未优化的线性层最初表示为：$((x_1), 1)$，其代价函数为：$Cost(x) = weight(x)$，即$x$的汉明距离。随后，作者采用递归方法，根据不同条件进行状态转移，确保代价函数逐步收敛。终止条件如下：
 
+\begin{align*}
+x_{i} = 1 \lll r & : ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, x_{i-1}, x_{i+1}, \dots, x_v), v-1) \\
+x_{i} = x_{j} \lll r & : ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, x_{i-1}, x_{i+1}, \dots, x_v), v-1)
+\end{align*}
 
+每次转移后，代价函数的取值降低。然而，作者未对选择这些转移条件的原因进行说明。我们认为，作者采用了启发式方法，无法保证优化结果为最优。具体的转移条件如下：
+
+\begin{align*}
+x_i &= a \oplus (a \ggg r) \oplus b, \quad a = x_i \land (x_i \lll r), \quad a \land (a \ggg r) = 0 : \nonumber \\
+&\quad ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, a, \dots, x_v, b), v+1) \text{ or } ((x_1, \dots, a, \dots, x_v), v) \\
+x_{i} &= x_{i} \oplus (x_{j} \lll r), \quad i \neq j : ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, x_{i} \oplus x_{j} \lll r, \dots, x_v), v) \\
+x_i &= a \oplus b, \quad x_j = (a \ggg r) \oplus c : ((x_1, \dots, x_{i}, \dots, x_{j}, \dots, x_v), v) \rightarrow ((x_1, \dots, b, \dots, c, \dots, x_v, a), v+1)
+\end{align*}
 
 % Include the bibliography
 \bibliographystyle{alpha}
