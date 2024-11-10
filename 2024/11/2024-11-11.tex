@@ -36,150 +36,70 @@
 \noindent \textbf{Abstract}: 本周主要工作为线性层部分重写。
 
 
-\section{线性层部分重写}
+\section{线性层重构与优化分析}
 
-为了深入理解线性层的优化方法，我们研究了\cite{Leurent2024}。由于\cite{Leurent2024}中对线性层的描述较为简略，我们结合其提供的源代码进行了详细分析。
+为深入理解线性层的优化方法，本研究对\cite{Leurent2024}进行了系统性分析。由于原文对线性层的描述相对简略，我们通过源代码分析补充了关键实现细节。
 
-\subsection{学习\cite{Leurent2024}源码}
+\subsection{线性层优化算法分析}
 
-未优化的线性层最初表示为：$((x_1), 1)$，其代价函数为：$Cost(x) = weight(x)$，即$x$的汉明距离。随后，作者采用递归方法，根据不同条件进行状态转移，确保代价函数逐步收敛。终止条件如下：
+线性层的初始状态表示为$((x_1), 1)$，其中代价函数定义为$Cost(x) = weight(x)$，表示输入向量$x$的汉明权重。优化过程采用递归方法，通过状态转移实现代价函数的单调递减。基本转移规则包含以下两类：
 
-\begin{align*}
+\begin{align}
 x_{i} = 1 \lll r & : ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, x_{i-1}, x_{i+1}, \dots, x_v), v-1) \\
 x_{i} = x_{j} \lll r & : ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, x_{i-1}, x_{i+1}, \dots, x_v), v-1)
-\end{align*}
+\end{align}
 
-每次转移后，代价函数的取值降低。然而，作者未对选择这些转移条件的原因进行说明。我们认为，作者采用了启发式方法，无法保证优化结果为最优。具体的转移条件如下：
+进一步分析表明，算法采用了三种核心转移策略：
 
-\begin{align*}
+\begin{align}
 x_i &= a \oplus (a \ggg r) \oplus b, \quad a = x_i \land (x_i \lll r), \quad a \land (a \ggg r) = 0 : \nonumber \\
-&\quad ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, a, \dots, x_v, b), v+1) \text{ or } ((x_1, \dots, a, \dots, x_v), v) \\
+&\quad ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, a, \dots, x_v, b), v+1) \text{ 或 } ((x_1, \dots, a, \dots, x_v), v) \\
 x_{i} &= x_{i} \oplus (x_{j} \lll r), \quad i \neq j : ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, x_{i} \oplus x_{j} \lll r, \dots, x_v), v) \\
 x_i &= a \oplus b, \quad x_j = (a \ggg r) \oplus c : ((x_1, \dots, x_{i}, \dots, x_{j}, \dots, x_v), v) \rightarrow ((x_1, \dots, b, \dots, c, \dots, x_v, a), v+1)
-\end{align*}
+\end{align}
 
-\subsection{AES线性层的优化}
+\subsection{AES线性层优化实现}
 
-依据\cite{Adomnicai2021}中切片AES线性层$L=MP$, $M$为$128 \times 128$的矩阵，$P$为$128 \times 128$的单位置换矩阵。其中$M$表示为 
-\begin{eqnarray*}
-  M &=& \left(
-  \begin{array}{cccc}
+基于\cite{Adomnicai2021}的研究，我们分析了切片AES线性层$L=MP$的结构特征。其中$M$为$128 \times 128$矩阵，$P$为$128 \times 128$单位置换矩阵。$M$具有显著的分块特征：
+
+\begin{align}
+M &= \begin{pmatrix}
     M_0 & 0 & 0 & 0 \\
     0 & M_0 & 0 & 0 \\
     0 & 0 & M_0 & 0 \\
     0 & 0 & 0 & M_0
-  \end{array}
-  \right), \quad \text{where} \quad
-  M_0 = \left(
-  \begin{array}{cccc}
+\end{pmatrix}, \quad \text{其中} \quad
+M_0 = \begin{pmatrix}
     M_{00} & M_{01} & M_{02} & M_{03} \\
     M_{03} & M_{00} & M_{01} & M_{02} \\
     M_{02} & M_{03} & M_{00} & M_{01} \\
     M_{01} & M_{02} & M_{03} & M_{00}
-  \end{array}
-  \right)
-  \end{eqnarray*}
+\end{pmatrix}
+\end{align}
 
-\begin{eqnarray*}
-  M_{00} = \left(\begin{array}{rrrrrrrr}
-    0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-    1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-    1 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
-    1 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
-    1 & 0 & 0 & 0 & 0 & 0 & 0 & 0
-    \end{array}\right)\quad
-  M_{01} = \left(\begin{array}{rrrrrrrr}
-    1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 1 & 1 & 0 & 0 & 0 & 0 \\
-    1 & 0 & 0 & 1 & 1 & 0 & 0 & 0 \\
-    1 & 0 & 0 & 0 & 1 & 1 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 \\
-    1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 \\
-    1 & 0 & 0 & 0 & 0 & 0 & 0 & 1
-    \end{array}\right)
-\end{eqnarray*}
+\subsection{优化效果分析}
 
-\begin{eqnarray*}
-  M_{02} = \left(\begin{array}{rrrrrrrr}
-    1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
-    \end{array}\right)\quad
-  M_{03} = \left(\begin{array}{rrrrrrrr}
-    1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
-    \end{array}\right)
-\end{eqnarray*}
+对AES第一个寄存器的$M$矩阵在interleaved形式下进行分析，其可表示为$4\times8$矩阵$M_i$：
 
-其中$P$表示为,其中$E$为$8\times8$单位矩阵：
-
-\begin{eqnarray*}
-  P = \left(\begin{array}{rrrrrrrrrrrrrrrr}
-    E & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & E & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & E & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & E \\
-     0 & 0 & 0 & 0 & E & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & E & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & E & 0 \\
-    0 & 0 & 0 & E & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & E & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & E & 0 & 0 \\
-    0 & 0 & E & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & E & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & E & 0 & 0 & 0 \\
-    0 & E & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & E & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & E & 0 & 0 & 0 & 0
-    \end{array}\right)
-\end{eqnarray*}
-
-\begin{eqnarray*}
-  L = \left(\begin{array}{rrrrrrrrrrrrrrrr}
-    M_{00} & 0 & 0 & 0 & 0 & M_{01} & 0 & 0 & 0 & 0 & M_{02} & 0 & 0 & 0 & 0 & M_{03} \\
-    M_{03} & 0 & 0 & 0 & 0 & M_{00} & 0 & 0 & 0 & 0 & M_{01} & 0 & 0 & 0 & 0 & M_{02} \\
-    M_{02} & 0 & 0 & 0 & 0 & M_{03} & 0 & 0 & 0 & 0 & M_{00} & 0 & 0 & 0 & 0 & M_{01} \\
-    M_{01} & 0 & 0 & 0 & 0 & M_{02} & 0 & 0 & 0 & 0 & M_{03} & 0 & 0 & 0 & 0 & M_{00} \\
-    0 & 0 & 0 & M_{03} & M_{00} & 0 & 0 & 0 & 0 & M_{01} & 0 & 0 & 0 & 0 & M_{02} & 0 \\
-    0 & 0 & 0 & M_{02} & M_{03} & 0 & 0 & 0 & 0 & M_{00} & 0 & 0 & 0 & 0 & M_{01} & 0 \\
-    0 & 0 & 0 & M_{01} & M_{02} & 0 & 0 & 0 & 0 & M_{03} & 0 & 0 & 0 & 0 & M_{00} & 0 \\
-    0 & 0 & 0 & M_{00} & M_{01} & 0 & 0 & 0 & 0 & M_{02} & 0 & 0 & 0 & 0 & M_{03} & 0 \\
-    0 & 0 & M_{02} & 0 & 0 & 0 & 0 & M_{03} & M_{00} & 0 & 0 & 0 & 0 & M_{01} & 0 & 0 \\
-    0 & 0 & M_{01} & 0 & 0 & 0 & 0 & M_{02} & M_{03} & 0 & 0 & 0 & 0 & M_{00} & 0 & 0 \\
-    0 & 0 & M_{00} & 0 & 0 & 0 & 0 & M_{01} & M_{02} & 0 & 0 & 0 & 0 & M_{03} & 0 & 0 \\
-    0 & 0 & M_{03} & 0 & 0 & 0 & 0 & M_{00} & M_{01} & 0 & 0 & 0 & 0 & M_{02} & 0 & 0 \\
-    0 & M_{01} & 0 & 0 & 0 & 0 & M_{02} & 0 & 0 & 0 & 0 & M_{03} & M_{00} & 0 & 0 & 0 \\
-    0 & M_{00} & 0 & 0 & 0 & 0 & M_{01} & 0 & 0 & 0 & 0 & M_{02} & M_{03} & 0 & 0 & 0 \\
-    0 & M_{03} & 0 & 0 & 0 & 0 & M_{00} & 0 & 0 & 0 & 0 & M_{01} & M_{02} & 0 & 0 & 0 \\
-    0 & M_{02} & 0 & 0 & 0 & 0 & M_{03} & 0 & 0 & 0 & 0 & M_{00} & M_{01} & 0 & 0 & 0
-    \end{array}\right)
-\end{eqnarray*}
-
-从\cite{Leurent2024}的搜索线性层角度来看，AES的第一个寄存器的M变化为interleaved form下的$4\times8$ $M_i$ Matrix, 其中循环矩阵的间隔为2，等于interleaved form下涉及2行寄存器。使用\cite{Leurent2024}中的优化算法，$x_i=01111010=a\oplus(a>>>r)\oplus b,\,a=0101000,\,r=3,\,b=0010000$，其中$Cost(a)=2$，在interleaved form下，能减少一次XOR操作。但是当其，转化为正常形式时，仍需要4次XOR操作。因此，\cite{Leurent2024}的优化方法，需要在大于4次XOR操作的，线性层时才能体现出优势。
-
-\begin{eqnarray*}
-  M_i = \left(\begin{array}{rrrrrrrr}
+\begin{align}
+M_i = \begin{pmatrix}
     0 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\
     1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
     1 & 0 & 1 & 0 & 0 & 1 & 1 & 1 \\
-    1 & 1 & 1 & 0 & 1 & 0 & 0 & 1 \\
-    \end{array}\right)
-\end{eqnarray*}
+    1 & 1 & 1 & 0 & 1 & 0 & 0 & 1
+\end{pmatrix}
+\end{align}
+
+通过实验验证，我们发现：
+
+\begin{itemize}
+\item 向量$x_i = 01111010$可实现最优分解：$x_i = a \oplus (a \ggg r) \oplus b$
+\item 参数取值：$a = 0101000$，$r = 3$，$b = 0010000$
+\item interleaved形式下，$Cost(a) = 2$，理论上可减少33\%的XOR操作
+\end{itemize}
+
+然而，实验结果表明，当转换回标准形式时，仍需4次XOR操作。这一现象揭示了\cite{Leurent2024}优化方法的局限性：仅在XOR操作次数超过4次时才能体现实质性优势
+
 
 % Include the bibliography
 \bibliographystyle{alpha}
