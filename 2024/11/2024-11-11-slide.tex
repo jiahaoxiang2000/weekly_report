@@ -1,0 +1,191 @@
+\documentclass{beamer}
+\usepackage{ctex} % 支持中文
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+% 添加参考文献支持
+\bibliographystyle{alpha}
+
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+
+% 自定义块颜色
+\setbeamercolor{block title}{bg=blue!30,fg=black}
+\setbeamercolor{block body}{bg=blue!10,fg=black}
+\setbeamercolor{exampleblock title}{bg=green!50,fg=black}
+\setbeamercolor{exampleblock body}{bg=green!20,fg=black}
+
+% 开启图表编号
+\setbeamertemplate{caption}[numbered]
+
+% 标题、作者、日期
+\title{\textbf{周报-向嘉豪(2024-11-11)}}
+\author{向嘉豪}
+\institute{衡阳师范学院}
+\date{2024年11月11日}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+    \frametitle{摘要}
+    \begin{block}{本周工作}
+        \begin{itemize}
+            \item 完成了线性层的重构
+            \item 系统性分析了\cite{Leurent2024}的线性层优化方法
+            \item 实验结果表明，循环矩阵在AES中的应用效果未达预期
+            \item 基于此，我们将研究重点转向线性层中置换操作的优化
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\section{线性层优化算法分析}
+\begin{frame}
+    \frametitle{线性层优化算法分析}
+    \begin{block}{基本概念}
+        \begin{itemize}
+            \item 初始状态：$((x_1), 1)$
+            \item 代价函数：$Cost(x) = weight(x)$，即$x$的汉明权重
+            \item 通过状态转移递归地优化代价函数
+        \end{itemize}
+    \end{block}
+    \begin{block}{基本转移规则}
+        \begin{enumerate}
+            \item $x_{i} = 1 \lll r : ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, x_{i-1}, x_{i+1}, \dots, x_v), v-1)$
+            \item $x_{i} = x_{j} \lll r : ((x_1, \dots, x_{i}, \dots, x_v), v) \rightarrow ((x_1, \dots, x_{i-1}, x_{i+1}, \dots, x_v), v-1)$
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{核心转移策略}
+    \begin{block}{三种核心策略}
+        \begin{enumerate}
+            \item $x_i = a \oplus (a \ggg r) \oplus b$
+            \begin{itemize}
+                \item $a = x_i \land (x_i \lll r)$
+                \item $a \land (a \ggg r) = 0$
+            \end{itemize}
+            \item $x_{i} = x_{i} \oplus (x_{j} \lll r)$，$i \neq j$
+            \item $x_i = a \oplus b$，$x_j = (a \ggg r) \oplus c$
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\section{AES线性层优化实现}
+\begin{frame}
+    \frametitle{AES线性层结构分析}
+    \begin{block}{矩阵结构}
+        \begin{itemize}
+            \item 基于\cite{Adomnicai2021}的研究，分析了切片AES线性层$L=MP$
+            \item $M$为$128 \times 128$矩阵，具有显著的分块特征
+            \item $P$为$128 \times 128$单位置换矩阵
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{矩阵表示}
+        \small{
+        $M = \begin{pmatrix}
+            M_0 & 0 & 0 & 0 \\
+            0 & M_0 & 0 & 0 \\
+            0 & 0 & M_0 & 0 \\
+            0 & 0 & 0 & M_0
+        \end{pmatrix}$，其中
+
+        $M_0 = \begin{pmatrix}
+            M_{00} & M_{01} & M_{02} & M_{03} \\
+            M_{03} & M_{00} & M_{01} & M_{02} \\
+            M_{02} & M_{03} & M_{00} & M_{01} \\
+            M_{01} & M_{02} & M_{03} & M_{00}
+        \end{pmatrix}$
+        }
+    \end{exampleblock}
+\end{frame}
+
+\section{优化效果分析}
+\begin{frame}
+    \frametitle{优化效果分析}
+    \begin{block}{实验验证}
+        \begin{itemize}
+            \item 对AES第一个寄存器的$M$矩阵在交错形式下进行分析
+            \item 可表示为$4\times8$矩阵$M_i$
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{矩阵$M_i$}
+        \small{
+        $M_i = \begin{pmatrix}
+            0 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\
+            1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+            1 & 0 & 1 & 0 & 0 & 1 & 1 & 1 \\
+            1 & 1 & 1 & 0 & 1 & 0 & 0 & 1
+        \end{pmatrix}$
+        }
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{实验结果}
+    \begin{block}{发现}
+        \begin{itemize}
+            \item 向量$x_i = 01111010$可实现最优分解：$x_i = a \oplus (a \ggg r) \oplus b$
+            \item 参数：$a = 0101000$，$r = 3$，$b = 0010000$
+            \item 在交错形式下，$Cost(a) = 2$，可以减少1次XOR
+            \item 然而，转换回标准形式后，仍需4次XOR操作
+        \end{itemize}
+    \end{block}
+    \begin{block}{结论}
+        揭示了\cite{Leurent2024}优化方法的局限性，仅在XOR操作次数超过4次时体现优势
+    \end{block}
+\end{frame}
+
+\section{论文撰写}
+\begin{frame}
+    \frametitle{论文撰写}
+    \begin{block}{研究结论}
+        \begin{itemize}
+            \item 循环矩阵在AES应用中效果未达预期
+            \item 将研究重心转向线性层中置换操作的优化
+        \end{itemize}
+    \end{block}
+    \begin{block}{主要工作}
+        \begin{enumerate}
+            \item \textbf{结构优化}：
+            \begin{itemize}
+                \item 重新组织内容结构
+                \item 提高论文的逻辑性和可读性
+            \end{itemize}
+            \item \textbf{算法改进}：
+            \begin{itemize}
+                \item 基于切片并行和动态规划的策略，优化merge和split操作
+            \end{itemize}
+            \item \textbf{OPO算法优化}：
+            \begin{itemize}
+                \item 引入贪心递归策略
+                \item 确保算法收敛性和全局最优解
+            \end{itemize}
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+    \frametitle{参考文献}
+    \bibliography{../../paper}
+\end{frame}
+
+% last is the adviser comment and our answer, one comment one answer and let them in one block
+
+\begin{frame}
+    \frametitle{老师评语}
+    \begin{block}{一、工作报告应明确呈现结果和工作量}
+        本周主要精力投入在理解\cite{Leurent2024}的算法，并尝试将其应用于AES的线性层优化。由于效果不理想，报告中未详细阐述该部分工作
+    \end{block}
+    \begin{block}{二、需明确最终完成计划}
+        本周计划，完成AES实现、实验数据的整理和论文初稿
+    \end{block}
+\end{frame}
+
+\end{document}
