@@ -1,0 +1,48 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{amsmath} % Added for math equation support
+\usepackage{titling}
+\usepackage[hidelinks]{hyperref}
+% \usepackage[style=authoryear]{biblatex} % Use biber backend
+% \addbibresource{../../paper.bib} % Specify the .bib file
+% Define \lll
+\newcommand{\lll}{\mathrel{<\!\!<\!\!<}}
+% Define \ggg
+\newcommand{\ggg}{\mathrel{>\!\!>\!\!>}}
+\geometry{margin=0.5in}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.5em}{}
+
+% title context and style setting
+\title{周报-向嘉豪(2024-11-18)}
+\setlength{\droptitle}{-6em} % Reduce space begin the title
+% Redefine \maketitle to display only the title
+\renewcommand{\maketitle}{
+  \begin{center}
+    \LARGE\bfseries\thetitle
+  \end{center}
+}
+
+\begin{document}
+
+\maketitle
+
+
+% Custom Abstract
+\noindent \textbf{Abstract}: 
+
+\noindent \textbf{下周计划}: 
+
+\subsection{AES优化实现}
+
+还是没有开始，先把环境搭建起来。
+
+% Include the bibliography
+% \bibliographystyle{alpha}
+% \bibliography{../../paper}
+
+\end{document}
