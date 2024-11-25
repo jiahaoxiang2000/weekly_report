@@ -2,6 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux,latex,tex
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,linux,latex,tex
 
+# open temp files
+.DS_Store
+
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
 *.aux
