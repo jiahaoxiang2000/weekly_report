@@ -1,0 +1,62 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{amsmath} % Added for math equation support
+\usepackage{graphicx} % Added for including graphics
+\usepackage{titling}
+\usepackage{subcaption}
+
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+\usepackage[hidelinks]{hyperref}
+% \usepackage[style=authoryear]{biblatex} % Use biber backend
+% \addbibresource{../../paper.bib} % Specify the .bib file
+% Define \lll
+\newcommand{\lll}{\mathrel{<\!\!<\!\!<}}
+% Define \ggg
+\newcommand{\ggg}{\mathrel{>\!\!>\!\!>}}
+\geometry{margin=0.5in}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.5em}{}
+
+% title context and style setting
+\title{周报-向嘉豪(2024-12-02)}
+\setlength{\droptitle}{-6em} % Reduce space begin the title
+% Redefine \maketitle to display only the title
+\renewcommand{\maketitle}{
+  \begin{center}
+    \LARGE\bfseries\thetitle
+  \end{center}
+}
+
+\begin{document}
+
+\maketitle
+
+
+% Custom Abstract
+\noindent \textbf{Abstract}: 
+
+\noindent \textbf{下周计划}: 
+
+\subsection{论文精修}
+
+对于论文中开源的链接部分，我们将所有的仓库跟换到私密，只有在论文发表后才会开源。这样可以保证我们的研究成果不会被他人提前获取。
+
+
+% \newpage
+% % Add some vertical space to push content to bottom if needed
+% \vfill
+
+
+% % Include the bibliography
+% \bibliographystyle{alpha}
+% \bibliography{../../paper}
+
+\end{document}
