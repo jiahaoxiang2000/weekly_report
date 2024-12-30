@@ -1,0 +1,64 @@
+% filepath: /Users/xiangjiahao/tex/weekly_report/2024/12/2024-12-30.tex
+\documentclass[11pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{amsmath} % Added for math equation support
+\usepackage{amssymb}
+\usepackage{graphicx} % Added for including graphics
+\usepackage{titling}
+\usepackage{subcaption}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[hidelinks]{hyperref}
+
+\geometry{margin=0.5in}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.5em}{}
+\title{周报-向嘉豪(2024-12-30)}
+\setlength{\droptitle}{-6em}
+
+\renewcommand{\maketitle}{
+  \begin{center}
+    \LARGE\bfseries\thetitle
+  \end{center}
+}
+
+\begin{document}
+
+\maketitle
+
+\noindent \textbf{摘要}：围绕GPU加速下AES实现的实验与论文写作开展工作。通过阅读\cite{Lee2022}并复现其在RTX 4090环境下的实验设置，我们成功获得了对1GB消息加密可达3057 Gbps的速度。同时，我们也初步确定了论文的题目《High Throughput Implementation of AES on GPUs》，并对引言部分进行了初步写作。
+
+\vspace{1em}
+\noindent \textbf{下周计划}：1）仔细阅读\cite{Lee2022}的代码，和\cite{Hajihassani2019}论文，2）继续论文写作，思考我们优化实现的方案。
+
+\section{论文实验}
+
+本周主要对\cite{Lee2022}一文进行了细致的阅览与实验复现。作者在该文中通过对数据表示方式的重新排列，去除了线程间运行的等待时间，并预计算部分轮密钥，从而有效提升AES的并行效率。我们依照其公开的实验配置在RTX 4090平台上进行测试时，针对1GB消息加密达到了3057 Gbps，相较\cite{Lee2022}原文在RTX 3080中测得的1489 Gbps提升近一倍。我们推测，硬件平台的性能差异在其中发挥了主导性作用。表~\ref{tab:aes_gpu_compare}展示了现阶段的实验结果。我们之后的目标是将吞吐量提升至3057 Gbps以上。
+
+\begin{table}[htbp]
+    \caption{基于GPU的AES CTR模式实现性能对比}
+    \label{tab:aes_gpu_compare}
+    \centering
+    \begin{tabular}{cccc}
+        \toprule
+        \textbf{实现} & \textbf{吞吐量 (Gbps)} & \textbf{硬件平台} & \textbf{发表年份} \\
+        \midrule
+        \cite{Hajihassani2019} & 1,478 & Tesla V100 & 2019 \\
+        \cite{Lee2022}        & 1,489 & RTX 3080   & 2022 \\
+        本文复现    & 3,057 & RTX 4090   & --- \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{论文写作}
+我们初步确定了题目《High Throughput Implementation of AES on GPUs》，并对引言与摘要写作。引言部分强调了AES在大规模数据传输（如数据中心、5G网络等）环境下实现高吞吐的紧迫需求，结合GPU大规模并行计算的潜能性，对当前研究的差距和挑战进行初步分析。为解决传统软件与扩展指令架构在Gbps到Tbps量级数据吞吐范围内的局限性，我们计划在论文中集中展示bitslicing技术与线程调度方法的优化思路，以缓解缓存未命中和线程阻塞对性能的影响。
+
+\bibliographystyle{alpha}
+\bibliography{../../paper}
+\end{document}
