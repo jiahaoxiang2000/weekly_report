@@ -1,0 +1,106 @@
+% filepath: /Users/xiangjiahao/tex/weekly_report/2024/12/2024-12-30-slide.tex
+\documentclass{beamer}
+\usepackage{ctex}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{tabularx}
+
+\bibliographystyle{alpha}
+
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+
+% 自定义块颜色
+\setbeamercolor{block title}{bg=blue!30,fg=black}
+\setbeamercolor{block body}{bg=blue!10,fg=black}
+\setbeamercolor{alertblock title}{bg=red!50,fg=black}
+\setbeamercolor{alertblock body}{bg=red!20,fg=black}
+
+% 开启图表编号
+\setbeamertemplate{caption}[numbered]
+
+\title{\textbf{周报——向嘉豪（2024年12月31日）}}
+\author{向嘉豪}
+\institute{衡阳师范学院}
+\date{2024年12月31日}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+    \frametitle{摘要}
+    \begin{block}{}
+        \begin{enumerate}
+            \item 复现\cite{Lee2022}的实验
+            \item 完善论文写作，初步确定题目
+        \end{enumerate}
+
+    \end{block}
+\end{frame}
+
+
+
+\section{论文实验}
+
+\begin{frame}
+    \frametitle{实验复现与结果}
+    \begin{block}{在RTX 4090平台上复现\cite{Lee2022}实验}
+        作者通过数据表示方式的重排降低了线程间等待，并对部分轮密钥的预计算，使AES的并行效率提升。使用其实现对1GB消息加密，吞吐量可达3057 Gbps，较\cite{Lee2022}中RTX 3080平台(1489 Gbps)提升近一倍，说明了硬件平台对整体性能的关键影响。表~\ref{tab:aes_gpu_compare}呈现了当下的实验结果。
+    \end{block}
+    \begin{table}[h]
+        \centering
+        \caption{基于GPU的AES CTR模式实现性能对比}
+        \label{tab:aes_gpu_compare}
+        \begin{tabular}{cccc}
+        \toprule
+        \textbf{实现} & \textbf{吞吐量 (Gbps)} & \textbf{硬件平台} & \textbf{发表年份} \\
+        \midrule
+        \cite{Hajihassani2019} & 1,478 & Tesla V100 & 2019 \\
+        \cite{Lee2022}        & 1,489 & RTX 3080   & 2022 \\
+        本文复现            & 3,057 & RTX 4090   & --- \\
+        \bottomrule
+        \end{tabular}
+   
+        \end{table}
+\end{frame}
+
+\section{论文写作}
+
+\begin{frame}
+    \frametitle{论文写作进展}
+    \begin{block}{论文题目《High Throughput Implementation of AES on GPUs》，(其中AES算法需要替换), 并完成了引言与摘要部分的写作}
+        引言突出对称加密在大规模数据传输场景（如数据中心与5G网络）实现高吞吐的紧迫需求，同时结合GPU并行计算的潜力，对现有研究的局限性与挑战进行概述。后续将在论文中重点介绍bitslicing与线程调度的优化方法。
+    \end{block}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+    \frametitle{参考文献}
+    \bibliography{../../paper}
+\end{frame}
+
+\begin{frame}
+    \frametitle{老师评语}
+
+    \begin{alertblock}{不要用AES，建议用最新顶刊或顶会的一个密码算法（最好是别人没做过的）}
+        寻找一个新的密码算法
+    \end{alertblock}
+    \begin{block}{本周计划}
+        \begin{enumerate}
+            \item 继续深入阅读\cite{Lee2022}的GPU实现代码
+            \item 寻找最新顶会或顶刊的密码算法
+        \end{enumerate} 
+    \end{block}
+\end{frame}
+
+\end{document}
