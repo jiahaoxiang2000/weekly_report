@@ -1,3 +1,6 @@
 [submodule "cryptobib"]
 	path = cryptobib
 	url = https://github.com/cryptobib/export
+[submodule "paper/ThirdPaper"]
+	path = paper/ThirdPaper
+	url = git@github.com:jiahaoxiang2000/ThirdPaper.git
