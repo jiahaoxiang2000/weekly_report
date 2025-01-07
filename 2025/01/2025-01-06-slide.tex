@@ -1,0 +1,96 @@
+\documentclass{beamer}
+\usepackage{ctex}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{tabularx}
+
+\bibliographystyle{alpha}
+
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\setbeamertemplate{caption}[numbered]
+% 自定义块颜色
+\setbeamercolor{block title}{bg=blue!30,fg=black}
+\setbeamercolor{block body}{bg=blue!10,fg=black}
+\setbeamercolor{alertblock title}{bg=red!50,fg=black}
+\setbeamercolor{alertblock body}{bg=red!20,fg=black}
+
+\title{周报}
+\author{向嘉豪}
+\institute{衡阳师范学院}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{摘要}
+  \begin{itemize}
+    \item \textbf{论文阅读}：实现算法更换为SPHINCS\textsuperscript{+}
+    \item \textbf{论文写作}：确定题目, 完成引言部分写作
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{论文阅读}
+  \noindent \textbf{更换实现算法: } 鉴于后量子密码标准化进程的重要进展，我们决定将研究重心转向NIST后量子密码标准化项目。该项目于2024年8月13日公布了最终标准，包括CRYSTALS-Dilithium、CRYSTALS-KYBER和SPHINCS\textsuperscript{+}等算法。在学长的指导下，我们选择了SPHINCS\textsuperscript{+}作为研究对象，这是一个\textcolor{blue}{无状态哈希签名方案}，由\cite{Bernstein2019}提出。与传统数字签名不同，SPHINCS\textsuperscript{+}基于哈希函数构建，能够\textcolor{red}{抵抗量子计算攻击}，在后量子密码标准化中具有重要地位。我们计划基于其第三轮提交规范开展优化实现工作。
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{论文阅读}
+
+  \noindent \textbf{SPHINCS\textsuperscript{+}算法: } SPHINCS\textsuperscript{+}的签名生成过程包括三个主要步骤：计算消息哈希值，FORS签名和HT签名。其中表~\ref{tab:hash_latency}展示了SPHINCS\textsuperscript{+}中哈希函数的延迟测试结果。其中\textcolor{blue}{H、F和Hmsg}分别表示HT签名、FORS签名和Hmsg的哈希函数延迟。\textcolor{blue}{PRF、PRFmsg} 为计算过程中伪随机数生成所需延迟。为此我们可以从HT、FORS、Hmsg和PRF四个方面考虑，以求更优的实现方案。
+
+  \begin{table}[htbp]
+    \centering
+    \caption{SPHINCS\textsuperscript{+}-128F-SIMPLE 哈希函数延迟测试（微秒）\cite{Wang2025}}
+    \label{tab:hash_latency}
+    \begin{tabular}{lccccccc}
+      \toprule
+      算法 & H & F & PRF & PRFmsg & Hmsg \\
+      \midrule
+      SHA-256  & 3.2 & 2.8 & 1.6 & 5.9 & 4.8 \\
+      SHAKE256  & 6.9 & 6.5 & 5.1 & 5.2 & 6.3 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}
+  \frametitle{论文写作}
+  \begin{itemize}
+    \item 我们确定了\textcolor{blue}{题目}《Efficient Implementations of post-quantum SPHINCS\textsuperscript{+} on GPUs》, (i.e, 老师指导下，添加后量子算法) ，并完成了摘要部分的撰写。
+    \item \textcolor{blue}{引言}部分阐述了量子计算对现有密码体系的威胁，强调了后量子密码学标准化进程中SPHINCS\textsuperscript{+}作为无状态哈希签名方案的重要地位。结合SPHINCS\textsuperscript{+}计算开销大的特点，我们提出利用GPU并行计算能力来加速签名生成过程。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+  \frametitle{参考文献}
+  \bibliography{../../paper}
+\end{frame}
+\begin{frame}
+  \frametitle{老师评语}
+  \begin{alertblock}{题目中能不能在这个算法修改为 后量子算法sphincs}
+    已添加后量子算法
+  \end{alertblock}
+  \begin{block}{下周计划}
+    \begin{enumerate}
+      \item 研读SPHINCS\textsuperscript{+}第三轮提交规范及实现代码，整理关键数据结构和操作流程.
+      \item 深入分析GPU端并行化策略\cite{Wang2025}.
+    \end{enumerate}
+  \end{block}
+
+\end{frame}
+\end{document}
