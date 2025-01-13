@@ -1,0 +1,119 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{amsmath} % Added for math equation support
+\usepackage{amssymb}
+\usepackage{graphicx} % Added for including graphics
+\usepackage{titling}
+\usepackage{subcaption}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tikz}
+
+\geometry{margin=0.5in}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.5em}{}
+\title{周报-向嘉豪(\today)}
+\setlength{\droptitle}{-6em}
+
+\renewcommand{\maketitle}{
+  \begin{center}
+    \LARGE\bfseries\thetitle
+  \end{center}
+}
+
+\begin{document}
+
+\maketitle
+
+\noindent \textbf{摘要}：
+本周研究工作主要聚焦于SPHINCS\textsuperscript{+}签名方案中的两个核心组件：FORS（Forest Of Random Subsets）机制与HT（Hypertree）树结构。通过深入分析NIST提交的源代码实现与相关文献，我们系统地梳理了签名生成过程中的关键步骤与树形结构的层级关系。实验方面，我们使用Python实现了FORS子树生成与验证的原型系统。
+
+\vspace{1em}
+\noindent \textbf{下周计划}： 1)完成对SPHINCS\textsuperscript{+}的完整实现，包括FORS、HT树等关键组件；2)进一步研究SPHINCS\textsuperscript{+}的并行计算特性，探索GPU加速优化方案。
+
+\section{SPHINCS\textsuperscript{+} (SPX)}
+
+\subsection{签名算法初步理解}
+本周，我们通过仔细研读SPX签名函数的论文与实现源码，逐渐理清了其核心思想。由于论文多以伪代码展示，并缺少针对签名结构的详细说明，初读时较为费解。但在反复对照源码与文献之后，我们对SPX整体的签名流程有了更为清晰的认知。
+
+SPX的签名依托Merkl\-e Hash树，将多个安全私钥($sk_i$)视为树的叶子节点，多次哈希后得到根节点($pk$)并对外公开，如图~\ref{fig:spx_sign}所示。对于签名方而言，所有$sk_i$均可使用，但为了保护私钥安全，只会在签名中暴露必须的中间哈希节点与局部私钥。验证方只需据此重构根节点，与公开的$pk$对比一致，即能完成认证。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  level distance=1.5cm,
+  level 1/.style={sibling distance=4cm},
+  level 2/.style={sibling distance=2cm},
+  every node/.style={draw,circle,minimum size=0.8cm}
+]
+% Root node (pk)
+\node[fill=gray!20] {$PK$}
+% Level 1
+child {node {$h_1$}
+  child {node[fill=blue!20] {$sk_1$}}
+  child {node[fill=blue!20] {$sk_2$}}
+}
+child {node {$h_2$}
+  child {node[fill=blue!20] {$sk_3$}}
+  child {node[fill=blue!20] {$sk_4$}}
+};
+
+\end{tikzpicture}
+\caption{SPX中的Merkle Hash树结构示意图}
+\label{fig:spx_sign}
+\end{figure}
+
+\subsection{FORS树}
+FORS（Forest Of Random Subsets）树由$k$个并排的Merkle子树组合而成（图\ref{fig:fors_tree}）。每个子树根节点用于拼接形成FORS的签名$SIG_{FORS}$. 在验证环节，需要公开相应私钥部分以及各子树的中间哈希节点，以重建并校验每个子树的根节点。FORS基于消息$m$的哈希值，快速定位并公开对应的$sk_i$，然后将所有子树的根节点拼接成一个整体，用于后续HT树的输入。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  level distance=1.4cm,
+  level 1/.style={sibling distance=3cm},
+  every node/.style={draw,circle,minimum size=0.65cm,font=\small},
+  % edge from parent/.style={->,>=stealth,thick}
+]
+% Root node
+\node[fill=gray!20] {$PK$}
+child {node[fill=blue!20] {$M_1$}}
+child {node[fill=blue!20] {$M_i$}}
+child {node[fill=blue!20] {$M_k$}}
+;
+\end{tikzpicture}
+\caption{FORS树示意图：$k$个Merkle子树并排组合}
+\label{fig:fors_tree}
+\end{figure}
+
+\subsection{HT树}
+HT（Hypertree）结构采用分层聚合的方式（图\ref{fig:ht_tree}）：每层XMSS树的根节点作为下一层的叶子节点，最终在顶部生成全球的$PK$. 在验证环节，SPX结合各层子树的WOTS+签名与中间哈希节点来完成验证流程。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  level distance=1.4cm,
+  level 1/.style={sibling distance=4cm},
+  every node/.style={draw,circle,minimum size=0.65cm,font=\small},
+]
+% Root node
+\node[fill=gray!20,font=\small] {$PK$}
+child {node[fill=blue!20] {$M_d$}
+  child {node[fill=blue!20] {$M_i$}
+    child {node[fill=blue!20] {$M_1$}}
+  }
+};
+\end{tikzpicture}
+\caption{HT树示意图：逐层汇聚得到全局公钥}
+\label{fig:ht_tree}
+\end{figure}
+% ...existing code...
+% \bibliographystyle{alpha}
+% \bibliography{../../paper}
+\end{document}
