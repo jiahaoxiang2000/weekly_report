@@ -15,7 +15,6 @@
 %%%%%%%%%% report package %%%%%%%%%%
 \LoadClass{article} % Added to define standard font sizes
 % Load common packages
-\RequirePackage[utf8]{inputenc}
 \RequirePackage{graphicx}
 \RequirePackage{hyperref}
 \RequirePackage{geometry}
@@ -49,6 +48,11 @@
     \LARGE\bfseries\thetitle
   \end{center}
 }
+
+% Choose Chinese fonts
+\setCJKmainfont{Songti SC} % Main Chinese font (Songti)
+\setCJKsansfont{Lantinghei TC} % Sans-serif Chinese font (Heiti)
+\setCJKmonofont{Maple Mono NF CN} % Monospaced Chinese font (Fangsong)
 
 \fi
 
