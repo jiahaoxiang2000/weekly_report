@@ -34,16 +34,21 @@
 \RequirePackage{tikz}
 \RequirePackage{titlesec} % Added: Load titlesec package for \titleformat
 
+%% Customize the title format
+\titleformat{\section}
+{\normalfont\Large\bfseries}{\thesection}{1em}{}
+
 % Settings specific to report
 \geometry{margin=0.5in, paperheight=11in, paperwidth=8.5in} % Set paper size
 
-% Custom header and footer
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[C]{\thetitle}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
+% Define default title and droptitle
+\title{周报-向嘉豪(\today)}
+% Customized maketitle command
+\renewcommand{\maketitle}{
+  \begin{center}
+    \LARGE\bfseries\thetitle
+  \end{center}
+}
 
 \fi
 
