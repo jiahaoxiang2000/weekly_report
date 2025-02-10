@@ -36,7 +36,7 @@
 % Choose Chinese fonts
 \setCJKmainfont{Songti SC} % Main Chinese font (Songti)
 \setCJKsansfont{Lantinghei TC} % Sans-serif Chinese font (Heiti)
-\setCJKmonofont{Maple Mono NF CN} % Monospaced Chinese font (Fangsong)
+% \setCJKmonofont{Maple Mono NF CN} % Monospaced Chinese font (Fangsong)
 
 %% Customize the title format
 \titleformat{\section}
