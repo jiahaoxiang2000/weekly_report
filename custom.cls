@@ -76,14 +76,14 @@
 \RequirePackage{ctex}
 
 % Font configuration for Chinese
-\setCJKmainfont{Maple Mono NF CN}
-\setCJKsansfont{Maple Mono NF CN}
-\setCJKmonofont{Maple Mono NF CN}
+% \setCJKmainfont{Maple Mono NF CN}
+% \setCJKsansfont{Maple Mono NF CN}
+% \setCJKmonofont{Maple Mono NF CN}
 
-% the english font setting
-\setmainfont{Maple Mono NF CN}
-\setsansfont{Maple Mono NF CN}
-\setmonofont{Maple Mono NF CN}
+% % the english font setting
+% \setmainfont{Maple Mono NF CN}
+% \setsansfont{Maple Mono NF CN}
+% \setmonofont{Maple Mono NF CN}
 
 % Beamer settings
 \usetheme{Madrid}
