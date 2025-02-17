@@ -17,6 +17,13 @@
 
 \RequirePackage{graphicx}
 \RequirePackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  filecolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
 \RequirePackage{booktabs}
