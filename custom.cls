@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{custom}[2023/10/01 v1.0 Custom LaTeX Class]
+\ProvidesClass{custom}[2024/02/17 Custom class for weekly reports]
 
 % Define options for report and slide
 \newif\if@isreport
@@ -73,6 +73,14 @@
 \RequirePackage{amssymb}
 \RequirePackage{booktabs}
 \RequirePackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  filecolor=magenta,
+  urlcolor=cyan,
+  pdftitle={Weekly Report},
+  pdfpagemode=FullScreen,
+}
 \RequirePackage{subcaption}
 \RequirePackage{multicol}
 \RequirePackage{listings}
