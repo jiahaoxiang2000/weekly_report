@@ -1,0 +1,100 @@
+\documentclass[slide]{../../custom}
+\usepackage{makecell}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{摘要}
+  \begin{itemize}
+    \item \textbf{SHA256 GPU实现与性能分析}
+    \item \textbf{论文前置知识写作}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{SHA256 实验结果}
+  \begin{table}
+    \centering
+    \caption{不同实现方式的最大吞吐量对比}
+    \begin{tabular}{|l|c|c|c|}
+      \hline
+      实现方式 & \makecell{最大吞吐量\\(MB/s)} & \makecell{消息大小\\(B)} & 加速比 \\
+      \hline
+      CPU单核 \cite{Wang2025} & 230.40 & 131,072 & 1× \\
+      GPU单核 \cite{Wang2025} & 25.39 & 16,384 & 0.11× \\
+      \hline
+      GPU并行 & 478,324.05 & 1,024 & 2,076× \\
+      \hline
+      GPU多流 & 22,923.71 & 16,384 & 99× \\
+      \hline
+    \end{tabular}
+  \end{table}
+
+  \begin{itemize}
+    \item GPU单核性能低于CPU单核：执行效率低+数据传输开销
+    \item 最优配置(Grid=128, Block=256)：\textcolor{blue}{2076倍加速比}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{性能分析}
+  \begin{columns}
+    \column{0.48\textwidth}
+    \textbf{线程配置影响}
+    \begin{itemize}
+      \item Grid=128匹配SM数量最优
+      \item Block=256在资源平衡点
+      \item 大Block导致资源竞争
+    \end{itemize}
+
+    \column{0.48\textwidth}
+    \textbf{消息大小影响}
+    \begin{itemize}
+      \item 4B-512B：快速增长期
+      \item 1024B-4096B：峰值性能
+      \item >4096B：性能下降期
+    \end{itemize}
+  \end{columns}
+
+  \vspace{0.5cm}
+  \textcolor{blue}{关键发现：动态调整线程配置和消息分配具有研究价值}, 即存在核函数与其并发数量的最优组合，该组合配置下，吞吐量最大。 \\
+\end{frame}
+
+\begin{frame}
+  \frametitle{前置知识写作}
+  \textbf{SPHINCS\textsuperscript{+}组成}
+  \begin{itemize}
+    \item WOTS+：一次性签名方案
+    \item FORS：少次签名方案
+    \item Hypertree：多层Merkle树结构
+  \end{itemize}
+
+  \vspace{0.3cm}
+  \textbf{GPU计算模型}
+  \begin{itemize}
+    \item 硬件：多个SM，每个包含CUDA核心
+    \item 多级存储系统
+    \item CUDA优化策略
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{老师评语}
+  \begin{alertblock}{继续推进}
+  \end{alertblock}
+  \begin{block}{下周计划}
+  1) 将动态线程配置策略扩展到整个SPHINCS\textsuperscript{+}签名过程 \\
+2) 探索GPU多流处理技术，进一步提高性能
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{参考文献}
+\bibliographystyle{alpha}
+\bibliography{../../paper}
+\end{frame}
+
+\end{document}
