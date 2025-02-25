@@ -94,6 +94,9 @@
 % \setCJKsansfont{Maple Mono NF CN}
 % \setCJKmonofont{Maple Mono NF CN}
 
+% not show the bottom forward and backward navigation buttons
+\beamertemplatenavigationsymbolsempty
+
 % % the english font setting
 % \setmainfont{Maple Mono NF CN}
 % \setsansfont{Maple Mono NF CN}
