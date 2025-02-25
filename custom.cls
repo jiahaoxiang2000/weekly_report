@@ -32,7 +32,7 @@
 \RequirePackage{listings}
 \RequirePackage{multirow}
 \RequirePackage{tikz}
-
+\RequirePackage{makecell}
 \RequirePackage{geometry}
 \RequirePackage{fancyhdr}
 \RequirePackage{enumitem}
