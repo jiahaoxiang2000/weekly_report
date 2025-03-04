@@ -1,0 +1,98 @@
+\documentclass[slide]{../../custom}
+\usepackage{makecell}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{摘要}
+  \begin{itemize}
+    \item \textbf{SHA256哈希算法的GPU并行实现与优化}
+    \item \textbf{论文研究动机、贡献和实现部分的修订}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{SHA256线程束级并行实现}
+  \begin{columns}
+    \column{0.48\textwidth}
+    \textbf{线程布局设计}
+    \begin{itemize}
+      \item 线程0：状态初始化
+      \item 线程0-15：消息字加载与调度扩展
+      \item 线程0-7：轮计算中的状态变量管理
+      \item 线程0：填充和最终输出
+    \end{itemize}
+
+    \column{0.48\textwidth}
+    \textbf{优化亮点}
+    \begin{itemize}
+      \item 充分利用线程束内并行性
+      \item 减少线程束分化
+      \item \texttt{\_\_shfl\_sync()}实现高效数据共享
+      \item 吞吐量约120MB/s，\textcolor{blue}{6倍提升}, \cite{Wang2025}
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{论文研究动机更新}
+  \textbf{强化研究必要性}
+  \begin{itemize}
+    \item \textbf{现有实现的局限}
+      \begin{itemize}
+        \item 注重最大化吞吐量，忽视单线程执行效率
+        \item Kim等人：多次内核启动导致效率低下
+        \item Wang等人的CUSPX：线程利用和资源管理有优化空间
+      \end{itemize}
+    \item \textbf{关键观察}
+      \begin{itemize}
+        \item 底层哈希函数优化不足
+        \item 未充分考虑线程数量与执行效率间的权衡
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{论文主要贡献修订}
+  \begin{enumerate}
+    \item \textbf{哈希函数级并行方法}
+      \begin{itemize}
+        \item 细粒度任务分配减少延迟
+        \item 显著加速SPHINCS+核心计算原语
+      \end{itemize}
+
+    \item \textbf{自适应线程分配策略}
+      \begin{itemize}
+        \item 优化线程数量与内核函数效率间平衡
+        \item 最小化同步开销
+        \item 最大化GPU计算吞吐量
+      \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \frametitle{老师评语}
+  \begin{alertblock}{工作量偏小，现在的写作我通篇看了下，离快报差距非常大}
+    \begin{itemize}
+      \item 计划增加工作深度：完善SHA256实现细节，补充性能分析与对比实验
+      \item 提高写作质量：重构论文框架，完善技术细节，强化创新点阐述
+    \end{itemize}
+  \end{alertblock}
+  \begin{block}{下周计划}
+    \begin{enumerate}
+      \item 基于优化后的SHA256实现，完成SPHINCS+签名方案中WOTS+和FORS组件的GPU加速实现
+      \item 设计并实现自适应线程分配策略，针对不同参数集优化计算资源分配
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{参考文献}
+  \bibliographystyle{alpha}
+  \bibliography{../../paper}
+\end{frame}
+
+\end{document}
