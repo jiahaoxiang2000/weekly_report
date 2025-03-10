@@ -1,0 +1,51 @@
+\documentclass[report]{../../custom}
+\begin{document}
+\maketitle
+
+\noindent \textbf{摘要：}
+本周主要工作集中在XMSS树结构的并行实现优化及相关论文的写作与重构上。针对SPHINCS+签名方案中的XMSS组件，我们实施了节点级并行和WOTS级并行两层次的并行技术，并结合动态调度策略进行优化。实验结果表明，在二级并行中加入动态调度带来了轻微的性能提升（8.16x至8.21x），而在三级并行中采用动态调度与GPU优化技术后，性能显著提高（142.65x至159.30x），PKGEN操作的执行时间从0.220ms降至0.197ms，实现了10.9\%的性能提升。同时，我们确定论文的理论基础，将动态调度作为性能提升的理论依据，去构建针对不同核函数的最优线程配置映射函数，并设计完整的调度实现机制。
+
+\vskip 0.5cm
+
+\noindent \textbf{下周计划：} 1） 构建最优线程配置映射函数，强化理论分析部分；2）对剩余组件进行动态调度的实现。
+
+\section{XMSS树并行实现优化}
+
+SPHINCS+签名方案中的XMSS（树哈希）组件是影响整体性能的关键因素。本周我们重点优化了XMSS树结构的并行实现，主要采用了二个层次的并行技术：\textbf{节点级并行（Node-based parallelism）}：同一层次的节点并行计算, 此为\cite{Wang2025}中实现的\textcolor{blue}{二级并行}。\textbf{WOTS级并行（WOTS-based parallelism）}：单个节点内的WOTS链并行计算, 此为\cite{Wang2025}中实现的\textcolor{blue}{三级并行}。
+
+实验结果表明，这些并行优化技术显著提高了签名性能。以下是在参数配置为\texttt{n = 24, h = 66, d = 22, b = 8, k = 33, w = 16, len = 51}的SLH-DSA-SHA-256-192f算法上的基准测试结果：
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{|l|c|c|}
+    \hline
+    \textbf{操作} & \textbf{执行时间} & \textbf{性能提升} \\
+    \hline
+    PKGEN 串行实现 \cite{Wang2025} & 31.382 ms & 基准 \\
+    \hline
+    PKGEN 二级并行 \cite{Wang2025} & 3.844 ms & 8.16x \\
+    \hline
+    PKGEN 二级并行+动态调度 & 3.822 ms & 8.21x \\
+    \hline
+    PKGEN 二三级并行 \cite{Wang2025} & 0.220 ms & 142.65x \\
+    \hline
+    PKGEN 二三级并行+动态调度+GPU优化 & 0.197 ms & 159.30x \\
+    \hline
+  \end{tabular}
+  \caption{XMSS树并行实现的性能对比}
+  \label{tab:xmss_performance}
+\end{table}
+
+首先我们将\textcolor{blue}{动态调度}（在运行的过程中调整运行的线程数，而非固定线程数去并行运行）,而将其放入到\textcolor{blue}{二级并行}中,性能只从8.16x提升到8.21x, 这说明动态调度在二级并行中并没有显著的性能提升。为此我们猜测是由于WOTS节点串型实现影响了性能提升。我们将\textcolor{blue}{动态调度}放入到\textcolor{blue}{三级并行}中,性能从142.65x提升到159.30x, 这说明动态调度在三级并行中有显著的性能提升。同时我们结合了GPU优化技术，对XMSS树生成签名进行优化，从0.220 ms提升到0.197 ms, 有\textcolor{red}{10.9\%}的性能提升。
+
+\section{论文写作}
+
+在论文重构过程中，我们发现现有的创新点缺乏理论基础。为此，我们决定将\textcolor{blue}{动态调度}作为性能提升的理论依据，同时补充实验数据以提高工作的重要性。我们之前的实验表明，在同一GPU平台上，对于不同核函数$g$，存在最优线程数$t$使性能达到最大。这一发现成为我们动态调度方法的理论基础。
+
+在整个签名过程中，需要对不同核函数进行动态调度。签名过程可表示为一个运行序列$((g_1,t_1),\dots,(g_n,t_n))$，我们的目标是使整体性能最优。由于签名算法是确定的，我们已知$(g_1,\dots,g_n)$，需要确定$(t_1,\dots,t_n)$。因此，我们的核心创新点是构建映射函数\textcolor{blue}{$F:G\rightarrow T$}，它能为每个核函数$g_i$分配最优线程配置$t_i$。
+为实现对签名各组件的动态调度，我们会设计一套完整的\textcolor{blue}{调度实现}机制。这一实现机制是我们工作的第二个创新点，为动态调度策略提供了实践基础。
+
+\bibliographystyle{alpha}
+\bibliography{../../paper}
+
+\end{document}
