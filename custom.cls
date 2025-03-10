@@ -49,7 +49,8 @@
 {\normalfont\Large\bfseries}{\thesection}{1em}{}
 
 % Settings specific to report
-\geometry{margin=0.5in, paperheight=11in, paperwidth=8.5in} % Set paper size
+% \geometry{margin=0.5in, paperheight=11in, paperwidth=8.5in} % Set paper size
+\geometry{a4paper, margin=1in} % Standard A4 paper with 1-inch margins
 
 % Define default title and droptitle
 \title{周报-向嘉豪(\today)}
