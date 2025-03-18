@@ -1,0 +1,155 @@
+\documentclass[slide]{../../custom}
+\usepackage{makecell}
+% Emoji configuration (common for both modes)
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{摘要}
+  \begin{itemize}
+    \item \textbf{自适应线程分配（Adaptive Thread）技术探索}
+    \item \textbf{论文绪论和自适应线程部分的修改完善}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{自适应线程分配理论模型}
+  \begin{columns}
+    \column{0.48\textwidth}
+    \textbf{传统问题}
+    \begin{itemize}
+      \item 通常将线程设为可用\textcolor{red}{最大值}
+      \item 忽略\textcolor{blue}{函数特性}差异
+      \item 资源分配\textcolor{red}{不均衡}
+    \end{itemize}
+
+    \textbf{理论模型}
+    \begin{itemize}
+      \item \textcolor{blue}{自适应线程函数}$AT:G\rightarrow T$
+      \item 性能模型: $T(g_i, t) = \textcolor{blue}{\alpha_i + \frac{\beta_i}{t} + \gamma_i \cdot t}$
+      \item 最优线程计算: $\textcolor{red}{t_i^* = \sqrt{\frac{\beta_i}{\gamma_i}}}$
+    \end{itemize}
+
+    \column{0.48\textwidth}
+    \textbf{参数含义}
+    \begin{itemize}
+      \item $\alpha_i$: \textcolor{blue}{固定开销}
+      \item $\frac{\beta_i}{t}$: \textcolor{blue}{并行加速部分}
+      \item $\gamma_i \cdot t$: \textcolor{blue}{线程管理开销}
+      \item $t$: \textcolor{blue}{线程数量}
+    \end{itemize}
+
+    \textbf{创新点}
+    \begin{itemize}
+      \item 根据函数特性\textcolor{red}{动态分配}
+      \item \textcolor{blue}{平衡并行与管理开销}
+      \item 资源\textcolor{red}{最优化利用}
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{实验结果}
+  \centering
+  \begin{tabular}{ccc}
+    \toprule
+    \makecell{\textbf{Block×Thread}\\\textbf{配置}} & \makecell{\textbf{每操作}\\\textbf{耗时(ms)}} & \makecell{\textbf{相对默认配置}\\\textbf{性能提升}} \\
+    \midrule
+    128×64 & 0.0025 & -13.6\% \\
+    默认配置 (512×32) \cite{Wang2025} & 0.0022 & 基准 \\
+    128×256 & 0.0017 & \textcolor{blue}{22.7\%} \\
+    128×512 & 0.0018 & 18.2\% \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5cm}
+  \textbf{关键发现(公钥生成):}
+  \begin{itemize}
+    \item 最优线程配置(128×256)提升22.7\%性能
+    \item 并非最大线程数(128×512)才有最优性能
+    \item 验证了理论模型的有效性
+  \end{itemize}
+\end{frame}
+
+% \begin{frame}
+%   \frametitle{实施策略}
+%   \begin{enumerate}
+%     \item \textbf{离线性能剖析}
+%       \begin{itemize}
+%         \item 精确量化不同线程配置下的执行效率
+%         \item 识别关键函数的最优线程配置
+%       \end{itemize}
+
+%     \item \textbf{优化映射表构建}
+%       \begin{itemize}
+%         \item 为常见操作预先确定理想配置
+%         \item 建立函数特征到线程参数的映射关系
+%       \end{itemize}
+
+%     \item \textbf{动态线程分配机制}
+%       \begin{itemize}
+%         \item 运行时根据计算负载自动调整
+%         \item 考虑硬件状态和并行度需求
+%         \item 实现接近最优的性能表现
+%       \end{itemize}
+%   \end{enumerate}
+% \end{frame}
+
+\begin{frame}
+  \frametitle{论文写作进展}
+  学长指导下，我们查阅了NIST文献，确认SPHINCS+已于2024年8月更名为SLH-DSA并纳入FIPS 205标准。
+  \vfill
+  \begin{columns}
+    \column{0.48\textwidth}
+    \textbf{绪论部分修改}
+    \begin{itemize}
+      \item 精简\textcolor{blue}{PQC背景}介绍
+      \item 突出\textcolor{red}{SPHINCS+与SLH-DSA关系}
+      \item 重构\textcolor{blue}{相关工作}部分
+      \item 明确当前GPU实现的效率瓶颈:
+        \begin{itemize}
+          \item \textcolor{red}{统一的最大线程分配策略}
+          \item \textcolor{red}{次优的线程性能}
+        \end{itemize}
+      \item 强化\textcolor{blue}{贡献点}表述
+    \end{itemize}
+
+    \column{0.48\textwidth}
+    \textbf{自适应线程分配部分}
+    \begin{itemize}
+      \item 构建基于\textcolor{blue}{函数特性}的性能模型
+      \item 提出\textcolor{red}{最优线程数}计算公式
+      \item 设计\textcolor{blue}{动态实现}算法
+      \item \textcolor{red}{离线分析}与\textcolor{red}{运行时调整}相结合
+      \item 资源\textcolor{blue}{最优利用}方案
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{老师评语}
+  \begin{alertblock}{加快}
+  预计4月底，完成初稿。
+  \end{alertblock}
+  \vfill
+  \begin{block}{下周计划}
+    \begin{enumerate}
+      \item 完善实验和创新点二写作
+      \item 设计并实现自动化框架，用于确定各类密码算法操作的最佳线程配置
+    \end{enumerate}
+  \end{block}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{参考文献}
+  \bibliographystyle{alpha}
+  \bibliography{../../paper}
+\end{frame}
+
+\end{document}
