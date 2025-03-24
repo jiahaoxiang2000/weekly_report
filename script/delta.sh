@@ -8,9 +8,6 @@ TIME_PERIOD="@{$DAYS_AGO days ago}"
 cd ..
 mkdir -p delta
 
-# Generate a diff between the specified time period and current HEAD
-# Save it to a file in the delta directory
-git diff "$TIME_PERIOD" HEAD > delta/recent_changes.diff
 
 if [ -d "paper/ThirdPaper" ]; then
   cd paper/ThirdPaper
