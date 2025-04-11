@@ -3,6 +3,8 @@
 The report is to record the things I have done in the past week. It helps me to review my work and make a plan for the next week.
 Help me to keep track of my progress and make sure I am on the right track.
 
+> old version weekly report on the [Yuque](https://www.yuque.com/xjh2000/wzrsc8).
+
 ## TASKS
 
 - [ ] TODO: change the report font more beautiful.
