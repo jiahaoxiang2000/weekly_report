@@ -16,15 +16,30 @@
 \maketitle
 
 \begin{abstract}
-  本周主要工作集中在论文图表的\blue{尺寸调整}与\blue{排版优化}，以及论文内容的\blue{学术表达提升}和\blue{重复率检测}，最终相似度指数仅为\red{10\%}，符合投稿要求。期刊调研后，确定以\red{TCAS-II}为首选投稿目标。
+  本周主要完成了\blue{论文的修订定稿}与\blue{IEEE期刊投稿准备工作}。论文方面，对Thread-Adaptive: Optimized Parallel Architectures of SLH-DSA on GPUs进行了系统性优化，明确了\red{线程自适应分配架构}与\red{函数级并行方法}的技术细节，完善了实验数据与性能分析。投稿准备方面，已按照\blue{IEEE TCAS-II}期刊要求完成了Cover Letter撰写、文档整理与格式规范化等工作。
 \end{abstract}
 
 \begin{weekplan}
-1) \blue{对论文写作进行最后的修改}
-2) \blue{准备期刊投稿所需材料}
+1) \blue{论文校正与投稿}
 \end{weekplan}
 
-\section{论文写作}
+\section{论文修正和投稿准备}
+
+\subsection{论文修正}
+
+本周对论文Thread-Adaptive: Optimized Parallel Architectures of SLH-DSA on GPUs进行了最终修订与完善，主要内容包括：
+对论文架构的核心贡献进行了更清晰的阐述。将三层并行优化架构的描述进行了精炼，包括\blue{自适应线程分配（ATA）}与\blue{函数级并行（FLP）}两个关键技术点。自适应线程分配技术通过建立精确的性能模型，为每个密码操作精确校准最佳线程配置，有效平衡了并行计算与同步开销。函数级并行方法将密码操作分解为细粒度计算任务，实现了更高效的资源利用。这两项技术的结合显著提升了SLH-DSA在GPU平台上的执行性能。
+
+完善了实验数据与性能分析部分。通过系统性的对比实验，明确了在\red{SHA2-128f参数集}下，本方案实现了\red{62,239次/秒}的签名吞吐量，较Wang等人的方案提升了1.15倍。针对不同参数集的扩展实验表明，对于计算密集型的SHA2-128s参数集，吞吐量提升达到了1.33倍。
+
+优化了学术表达方式与技术术语。减少了列表环境的使用，改为更连贯的段落叙述，提升了论文的学术性与可读性。精确定义了技术术语，如small（s）和fast（f）操作模式的明确解释，增强了论文的专业性。文中图表也进行了优化，增加了签名延迟分布的\blue{可视化分析}，为读者提供更直观的性能对比。
+
+\subsection{期刊投稿准备}
+
+完成了面向\blue{IEEE Transactions on Circuits and Systems Part II: Express Briefs}的投稿准备工作：
+撰写了专业的\blue{Cover Letter}。信中系统阐述了论文的三个主要贡献：\red{自适应线程分配框架}、\red{函数级并行架构}以及\red{全面的性能评估}。强调了本研究与期刊范围的高度契合性，特别是在密码硬件实现（DCS120B0）与密码架构（DCS120A5）两个领域。详细说明了研究成果的创新性与实用价值，突出了在量子安全密码学领域的前沿贡献。
+
+按照期刊严格要求整理了投稿材料。IEEE TCAS-II对篇幅有严格限制——内容部分\red{4.5页}，参考文献\red{0.5页}，总计5页。针对此要求，对论文格式进行了专门调整，确保参考文献单独占据最后半页。创建了完整的提交清单，包括主文稿PDF、LaTeX源文件压缩包、利益冲突声明等所有必要文件。
 
 
 % Replace standard bibliography commands with conditional version
