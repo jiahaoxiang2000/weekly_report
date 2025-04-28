@@ -11,14 +11,25 @@ mkdir -p delta
 
 if [ -d "paper/ThirdPaper" ]; then
   cd paper/ThirdPaper
-  git diff "$TIME_PERIOD" HEAD > ../../delta/thirdpaper_changes.diff
+  FROM_COMMIT=$(git rev-list -1 --before="$DAYS_AGO days ago" HEAD)
+  TO_COMMIT=$(git rev-parse HEAD)
+  echo "Diffing ThirdPaper from $FROM_COMMIT to $TO_COMMIT"
+  git diff "$FROM_COMMIT" "$TO_COMMIT" > ../../delta/thirdpaper_changes.diff
+  if [ ! -s ../../delta/thirdpaper_changes.diff ]; then
+    echo "No changes found in this period." > ../../delta/thirdpaper_changes.diff
+  fi
   cd ../..
 fi
 
-# also have the paper/ThirdPaper/sphincs-plus folder
 if [ -d "paper/ThirdPaper/sphincs-plus" ]; then
   cd paper/ThirdPaper/sphincs-plus
-  git diff "$TIME_PERIOD" HEAD > ../../../delta/sphincsplus_changes.diff
+  FROM_COMMIT=$(git rev-list -1 --before="$DAYS_AGO days ago" HEAD)
+  TO_COMMIT=$(git rev-parse HEAD)
+  echo "Diffing sphincs-plus from $FROM_COMMIT to $TO_COMMIT"
+  git diff "$FROM_COMMIT" "$TO_COMMIT" > ../../../delta/sphincsplus_changes.diff
+  if [ ! -s ../../../delta/sphincsplus_changes.diff ]; then
+    echo "No changes found in this period." > ../../../delta/sphincsplus_changes.diff
+  fi
   cd ../../..
 fi
 
