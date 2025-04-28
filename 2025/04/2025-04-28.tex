@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage{../../typesetting/styles/report-zh}
+\usepackage{threeparttable} % Add this package for tablenotes environment
+
+\setCJKmainfont{Source Han Serif SC} % Main Chinese font (Songti)
+\setCJKsansfont{Source Han Sans SC} % Sans-serif Chinese font
+\setCJKmonofont{Noto Sans Mono CJK SC} % Monospaced Chinese font (uncomment if needed)
+
+% Set document information
+\title{周报~向嘉豪 (\today)}
+\author{向嘉豪}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  本周主要工作集中在论文图表的\blue{尺寸调整}与\blue{排版优化}，以及论文内容的\blue{学术表达提升}和\blue{重复率检测}，最终相似度指数仅为\red{10\%}，符合投稿要求。期刊调研后，确定以\red{TCAS-II}为首选投稿目标。
+\end{abstract}
+
+\begin{weekplan}
+1) \blue{对论文写作进行最后的修改}
+2) \blue{准备期刊投稿所需材料}
+\end{weekplan}
+
+\section{论文写作}
+
+
+% Replace standard bibliography commands with conditional version
+\printbibliographyifcited[alpha]{../../paper}
+
+\end{document}
