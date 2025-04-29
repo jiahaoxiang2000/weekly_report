@@ -1,0 +1,106 @@
+\documentclass{beamer}
+\usepackage{../../typesetting/styles/slide-zh}
+\usepackage{bookmark}
+
+\title{\LARGE{周报}}
+\subtitle{}
+\author{}
+\date{2025-04-28}
+
+\begin{document}
+
+% Title frame
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Outline frame
+\begin{frame}{大纲}
+  \tableofcontents
+\end{frame}
+
+\section{论文修正}
+\begin{frame}{论文修正与完善}
+  \begin{block}{核心贡献优化}
+    \begin{itemize}
+      \item 明确阐述了两个关键技术点：
+        \begin{itemize}
+          \item \textcolor{blue}{自适应线程分配（ATA）}：建立精确性能模型，平衡并行计算与同步开销
+          \item \textcolor{blue}{函数级并行（FLP）}：将密码操作分解为细粒度任务，提高资源利用率
+        \end{itemize}
+      \item 优化学术表达方式，减少列表环境，转为连贯段落
+      \item 完善技术术语定义（如small和fast操作模式）
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{实验数据与性能分析}
+  \begin{block}{性能突破}
+    \begin{itemize}
+      \item \textcolor{red}{SHA2-128f参数集}下，签名吞吐量达\textcolor{red}{62,239次/秒}
+      \item 较现有方案（\cite{Wang2025}）提升\textcolor{red}{1.15倍}
+      \item 对计算密集型SHA2-128s参数集，性能提升\textcolor{red}{1.33倍}
+    \end{itemize}
+  \end{block}
+  \begin{block}{可视化增强}
+    \begin{itemize}
+      \item 增加签名延迟分布的\textcolor{blue}{可视化分析}
+      \item 优化图表表达，提供更直观的性能对比
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\section{期刊投稿准备}
+\begin{frame}{IEEE TCAS-II投稿准备}
+  \begin{block}{Cover Letter撰写}
+    强调三个主要贡献：
+    \begin{itemize}
+      \item \textcolor{red}{自适应线程分配框架}
+      \item \textcolor{red}{函数级并行架构}
+      \item \textcolor{red}{全面的性能评估}
+    \end{itemize}
+    突出与期刊研究领域契合点：
+    \begin{itemize}
+      \item 密码硬件实现（DCS120B0）
+      \item 密码架构（DCS120A5）
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{投稿材料准备}
+  \begin{block}{期刊要求与调整}
+    IEEE TCAS-II对篇幅有严格限制：
+    \begin{itemize}
+      \item 内容部分：\textcolor{red}{4.5页}
+      \item 参考文献：\textcolor{red}{0.5页}
+      \item 总计：5页
+    \end{itemize}
+    调整：
+    \begin{itemize}
+      \item 格式精确调整，确保参考文献单独占据最后半页
+      \item 创建完整提交清单（主文稿PDF、LaTeX源文件、利益冲突声明等）
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{老师评语}
+    \begin{alertblock}{摘要的前半部分语言在仔细斟酌一下，并不出彩}
+        学习好的文章，进行修改
+    \end{alertblock}
+    \begin{alertblock}{参考文献最后一篇格式不正确，也可以考虑替换}
+        已替换
+    \end{alertblock}
+  \begin{block}{本周计划}
+    \begin{itemize}
+      \item \textcolor{blue}{仔细修改论文}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{参考文献}
+  \bibliographystyle{alpha}
+  \bibliography{../../paper}
+\end{frame}
+
+\end{document}
