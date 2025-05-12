@@ -10,3 +10,6 @@
 [submodule "typesetting"]
 	path = typesetting
 	url = git@github.com:jiahaoxiang2000/typesetting.git
+[submodule "paper/FourthPaper"]
+	path = paper/FourthPaper
+	url = git@github.com:jiahaoxiang2000/deeper-paper.git
