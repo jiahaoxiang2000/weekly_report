@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{../../typesetting/styles/report-zh}
+\usepackage{threeparttable} % Add this package for tablenotes environment
+
+\setCJKmainfont{Noto Serif CJK SC} % Main Chinese font (Songti)
+\setCJKsansfont{Noto Sans CJK SC} % Sans-serif Chinese font
+\setCJKmonofont{Noto Sans Mono CJK SC} % Monospaced Chinese font (uncomment if needed)
+
+% Set document information
+\title{周报~向嘉豪 (\today)}
+\author{向嘉豪}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  本周主要确定了第四篇论文的研究方向，\blue{聚焦于故障攻击防护技术研究}。构建了基于\blue{电压毛刺}的故障注入实验环境，并进行了初步测试。在调整注入参数后，\red{成功观察到一个错误的密文输出}。下周将继续\blue{优化故障注入参数}，提高\red{攻击成功率}，并尝试通过\blue{差分故障分析}提取密钥。
+\end{abstract}
+
+\begin{weekplan}
+1) 提高故障注入成功率 2）差分故障分析出密钥
+\end{weekplan}
+
+\section{第四篇论文}
+
+
+基于对主要密码学会议和期刊（ASIACRYPT 1990-2024、CRYPTO 1981-2024、EUROCRYPT 1982-2024、TCHES 2018-2024、ToSC 2016-2024）的文献统计分析，我们发现了\blue{72篇关于故障攻击（Fault Attack）的论文}，其中有\red{12篇（约16.7\%）专注于故障攻击防护技术}。在前三篇论文中，我们主要关注密码学算法的\blue{性能优化}，而在第四篇论文中，我们将转向\red{安全实现}，尤其是针对\blue{侧信道攻击}和\red{故障注入攻击}的防护机制。计划深入研究针对现代密码系统（特别是\blue{后量子密码算法}）的故障攻击防护技术。\blue{研究将聚焦于开发可验证、高效且适用于资源受限环境的故障攻击防护方法}。为此需要搭建一个\red{故障注入实验环境}。
+
+\subsection{实验环境}
+
+故障注入攻击的工作流程可概括为：目标设备发送\blue{触发信号}至电压故障设备，电压故障设备向目标设备\red{注入电压故障}，同时示波器\blue{捕获波形}，主机接收密文并与预期密文进行比较，从而确定故障注入是否成功。启发于老师转发的\blue{PADNA2025}，我们建立了完整的故障注入实验环境（基于\red{电压毛刺}）。\blue{该环境由三个主要组件构成}：目标设备（\blue{STM32F303芯片}）、电压故障注入设备和用于捕获波形的示波器。实验设置如下：
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.34\textwidth]{../../paper/FourthPaper/background/fig/fault_device.jpg}
+    \caption{故障注入实验装置。左侧为目标设备（STM32F303芯片），右上方为电压故障注入设备，右下方为捕获波形的示波器。}
+    \label{fig:fault_device}
+\end{figure}
+
+首先，我们识别了\blue{潜在的故障注入点}。通过捕获芯片工作电源的A通道和AES加密触发信号的B通道，我们观察到触发信号后第9轮加密的运行时间接近\blue{4.405ms}。这为故障注入提供了\red{精确的时间窗口}，如图\ref{fig:fault_point}所示。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../paper/FourthPaper/background/fig/FaultPoint.png}
+    \caption{故障注入点分析的捕获波形。A通道显示芯片工作电源，B通道显示AES加密触发信号。}
+    \label{fig:fault_point}
+\end{figure}
+
+在攻击过程中，我们采用了\red{电压故障攻击}方法。我们在AES加密过程中尝试了超过\blue{50次电压故障注入}，特别针对接近第9轮的时间段。如图\ref{fig:attack_inject}所示，\blue{蓝线急剧下降}表示故障注入过程中的电压波动。尽管进行了多次尝试，我们未能观察到任何\red{错误的密文输出}，表明故障注入\red{未能成功}。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../paper/FourthPaper/background/fig/AttackInject.png}
+    \caption{AES加密过程中的故障注入攻击波形。蓝线急剧下降表示故障注入过程中的电压波动。}
+    \label{fig:attack_inject}
+\end{figure}
+
+为此我们对\blue{电压毛刺的注入时间}$x$\blue{和持续时间}$y$\blue{进行调整}，在大约\blue{3000次注入}后，我们观察到了\red{一条错误的密文输出}，而在PADNA2025公众号上提供的$(x,y)$参数下，我们注入3000次（约1个小时）未观察到任何错误的密文输出。为\blue{提高注入的成功率}，我们正在阅读\cite{TCHES:BozFocPal19}。
+
+
+
+% Replace standard bibliography commands with conditional version
+\printbibliographyifcited[alpha]{../../paper/FourthPaper/tex/abbrev3,../../paper/FourthPaper/tex/crypto_custom}
+
+\end{document}
