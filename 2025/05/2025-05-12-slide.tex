@@ -1,0 +1,87 @@
+\documentclass{beamer}
+\usepackage{../../typesetting/styles/slide-zh}
+\usepackage{bookmark}
+
+\title{\LARGE{周报}}
+\subtitle{}
+\author{}
+\date{2025-05-12}
+
+\begin{document}
+
+% Title frame
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Outline frame
+\begin{frame}{大纲}
+  \tableofcontents
+\end{frame}
+
+
+\section{研究方向与进展}
+\begin{frame}{第四篇论文研究方向}
+  \begin{block}{研究聚焦}
+    本周确定了第四篇论文的研究方向，聚焦于\blue{故障攻击防护技术研究}。通过对主要密码学会议和期刊的文献统计，发现72篇关于故障攻击的论文，其中\red{12篇专注于防护技术}。本论文将从以往的性能优化转向\red{安全实现}，重点关注侧信道攻击与故障注入攻击的防护机制，尤其针对后量子密码算法。研究目标为开发高效、可验证且适用于资源受限环境的防护方法。
+  \end{block}
+   \begin{alertblock}{能有机合成硕士大论文不？}
+    大论文\blue{软硬件优化实现}包含\blue{抗故障攻击的安全实现}，可以和第二篇论文软件实现工作结合，实现更快更安全。
+  \end{alertblock}
+\end{frame}
+
+\section{实验环境搭建}
+\begin{frame}{故障注入实验环境}
+  \textbf{环境构建.} 构建了基于电压毛刺的故障注入实验环境，包括目标设备（STM32F303芯片）、电压故障注入设备和示波器。实验流程为：目标设备发送触发信号，电压故障设备\red{注入电压故障}，示波器捕获波形，主机对比密文以判定注入效果。
+
+  % 添加实验装置图片
+  \begin{figure}
+    \centering
+    \rotatebox{270}{\includegraphics[width=0.38\textwidth]{../../paper/FourthPaper/background/fig/fault_device.jpg}}
+    \caption{故障注入实验装置。左侧为目标设备（STM32F303芯片），右上方为电压故障注入设备，右下方为捕获波形的示波器。}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{注入点分析}
+  \begin{block}{注入点分析}
+    通过捕获芯片电源与AES加密触发信号，确定第9轮加密的\blue{精确时间窗口（约4.405ms）}，为故障注入提供了依据。
+  \end{block}
+  % 添加注入点分析波形图
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../paper/FourthPaper/background/fig/FaultPoint.png}
+    \caption{故障注入点分析的捕获波形。A通道显示芯片工作电源，B通道显示AES加密触发信号。}
+  \end{figure}
+\end{frame}
+
+\section{实验结果与分析}
+\begin{frame}{实验结果}
+  \begin{block}{初步测试}
+    在AES加密过程中，尝试了超过50次电压故障注入，未观察到\red{错误的密文输出}。随后调整电压毛刺的注入时间$x$和持续时间$y$，在约3000次注入后，\red{成功观察到一条错误的密文输出}。而在\blue{公众号}参考参数下，注入3000次未见异常。阅读CHES论文\cite{TCHES:BozFocPal19}，以提高注入成功率。
+  \end{block}
+  % 添加实验结果波形图
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../paper/FourthPaper/background/fig/AttackInject.png}
+    \caption{AES加密过程中的故障注入攻击波形。蓝线急剧下降表示故障注入过程中的电压波动。}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{老师评语}
+  \begin{alertblock}{故障攻击这些实验都是自己做出来的？？}
+    是自己做的，其中大部分是实验室设备，电压毛刺是淘宝买的。
+  \end{alertblock}
+ 
+  \begin{block}{下周计划}
+    1）优化故障注入参数，提升\red{攻击成功率}，并尝试通过差分故障分析提取密钥。
+    2）跑通攻击流程后，阅读\blue{抗故障攻击的实现}文献。
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{参考文献}
+  \bibliographystyle{alpha}
+  \bibliography{../../paper/FourthPaper/tex/abbrev3,../../paper/FourthPaper/tex/crypto_custom}
+\end{frame}
+
+\end{document}
