@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage{../../typesetting/styles/report-zh}
+\usepackage{threeparttable} % Add this package for tablenotes environment
+
+\setCJKmainfont{Noto Serif CJK SC} % Main Chinese font (Songti)
+\setCJKsansfont{Noto Sans CJK SC} % Sans-serif Chinese font
+\setCJKmonofont{Noto Sans Mono CJK SC} % Monospaced Chinese font (uncomment if needed)
+
+% Set document information
+\title{周报~向嘉豪 (\today)}
+\author{向嘉豪}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  本周接获TCAS-II期刊对第三篇论文的\red{拒稿通知}，编辑明确表示论文与期刊范围不符，建议投递至计算机领域期刊。针对此反馈，进行了\blue{全面的期刊调研}，着重分析适合短篇论文（letter type）的出版选项。通过对\blue{IEEE、Springer及ACM}出版社相关期刊的系统评估，确定了三个主要候选期刊。同时对投稿策略进行了\red{全面重新评估}，综合考量了审稿周期、接受概率与论文结构调整等因素。
+\end{abstract}
+
+\begin{weekplan}
+确定第三篇论文的最终目标期刊；依据目标期刊要求调整论文内容和格式；准备投稿前的编辑咨询通信。
+\end{weekplan}
+
+\section{第三篇论文投稿情况}
+
+本周（5月14日）收到TCAS-II期刊对第三篇论文的\red{拒稿决定}。该论文于5月8日提交，经过6天审核即被拒绝。编辑给出的明确拒稿理由为：``Unfortunately, this paper does not fit well within the scope of the journal. The scientific content related to the circuits \& system field is very limited. As it is, it seems more suitable for the Computer community."（论文与期刊范围不符，电路与系统领域相关的科学内容有限，更适合计算机领域社区）。
+
+\section{论文重新提交策略分析}
+
+\subsection{初始投稿决策回顾}
+
+通过深入分析，我们对最初选择TCAS-II的决策进行了反思。该选择主要基于该期刊曾于2022年发表过类似主题的研究：《Efficient implementation of AES-CTR and AES-ECB on GPUs with applications for high-speed FrodoKEM and exhaustive key search》。然而，编辑的反馈明确指出，\red{当前期刊的范围定位可能已经调整}，或者对电路系统内容的要求提高。
+
+对于学长提出的\blue{增加电路内容并重新投递TCAS-II}的建议，经过审慎评估认为该方案面临重大挑战：首先，缺乏电路设计专业背景，难以在短期内补充高质量的电路系统内容；其次，参考的2022年发表论文亦不含显著电路内容但获接受，表明\blue{期刊的评审标准可能正在收紧或转变}。考虑到重新修改后\red{仍可能被拒}的风险及时间成本，决定采纳编辑建议，将论文转投更适合的计算机领域期刊。
+
+\subsection{期刊调研与选择}
+
+通过系统性的期刊调研，我们拓展了候选范围，涵盖IEEE、\blue{Springer}及\blue{ACM}出版社。研究表明，适合短篇论文（letter type）的专业期刊多数位于\red{Q3至Q4}级别。经综合评估期刊范围匹配度、审稿周期与影响力，确定了三个主要候选期刊：IEEE Computer Architecture Letters（与研究内容\blue{契合度最高}，曾发表多篇硬件加速密码学算法研究）、IEEE Communications Letters（\red{影响因子相对较高}，但范围适配性存在风险）及IEEE Embedded Systems Letters（与嵌入式系统安全有关联）。
+
+后续将深入分析这些期刊的\blue{最新出版内容}，特别关注密码学算法实现与安全相关文献，以进一步评估适配性。为避免再次因范围不匹配而被拒，计划\red{首先通过正式邮件咨询各期刊编辑}，明确确认论文是否符合期刊范围要求。此预先咨询策略可有效节省投稿流程时间并提高接受概率。
+
+\subsection{投稿形式考量}
+
+在确定投稿策略时，需权衡\blue{论文形式}与\red{时间效率}。当前研究以短篇论文（letter type）形式完成，若转为常规长度论文需大幅扩展内容，将显著延长准备周期。考虑到短篇论文通常具有约三个月的接受周期，而常规论文可能需要六个月或更长时间，基于当前研究进度和时间规划，决定维持短篇论文形式，优先考虑接受letter类型的期刊。
+
+后续将根据所选期刊的具体要求，适当调整论文的\red{引言和背景部分}，更明确地突出研究与目标期刊侧重点的契合性，同时保持研究核心内容的完整性与科学严谨性。同时，计划重新评估\blue{关键词选择}，确保能更准确地反映研究内容与领域定位，有助于期刊编辑匹配合适的审稿人。
+
+
+% Replace standard bibliography commands with conditional version
+\printbibliographyifcited[alpha]{../../paper/FourthPaper/tex/abbrev3,../../paper/FourthPaper/tex/crypto_custom}
+
+\end{document}
