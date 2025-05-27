@@ -1,0 +1,85 @@
+\documentclass{beamer}
+\usepackage{../../typesetting/styles/slide-zh}
+\usepackage{bookmark}
+
+\title{\LARGE{周报}}
+\subtitle{}
+\author{}
+\date{\today}
+
+\begin{document}
+
+% Title frame
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Outline frame
+\begin{frame}{大纲}
+  \tableofcontents
+\end{frame}
+
+\section{防护机制分类调研}
+\begin{frame}{防护策略分类框架}
+  \begin{block}{系统性分类结果}
+    基于对近年来CHES会议相关研究的深入分析，构建了故障攻击防护机制的系统性分类框架。根据防护策略的核心方法论差异，现有技术可归纳为三大类别：\red{理论证明类防护}、\red{冗余校验类防护}和\red{混合类防护}。以\cite{TCHES:Genet23,TCHES:DhoOvcTop24,TCHES:THNABC24}等近期TCHES文献为基础进行分析。
+  \end{block}
+  
+ \begin{block}{理论证明类防护}
+    基于严格的数学理论构建可证明安全的防护机制。Asiacrypt 2009的代表性工作\cite{AC:CorMan09}在随机预言模型下证明了PSS编码机制对随机故障攻击的可证明安全性，\blue{为基于编码的防护策略提供了重要的理论支撑}。
+  \end{block}
+
+\end{frame}
+
+\begin{frame}{防护机制技术特征分析}
+  \begin{block}{冗余校验类防护}
+    通过引入冗余机制和状态校验来检测和缓解故障影响。\cite{TCHES:Genet23}提出的基于中间WOTS$^{+}$缓存的对策通过缓存关键中间状态实现故障检测时的安全回滚，\red{有效控制了故障传播范围}。\cite{TCHES:DhoOvcTop24}的StaTI方案基于阈值实现和线性编码技术，在非组合攻击场景下同时防护侧信道和故障攻击。
+  \end{block}
+  
+  \begin{block}{混合类防护}
+    结合软硬件多层防护机制构建分层防护体系（同时具有理论分析）。TCHES 2024的\cite{TCHES:THNABC24}形式化的k故障抗性分割概念通过可证明的安全保证减少硬件攻击面，并在此基础上引入软件防护层，\blue{实现了软硬件协同的鲁棒性故障防护解决方案}。
+  \end{block}
+\end{frame}
+
+\section{故障注入效率问题分析}
+\begin{frame}{实验问题诊断}
+  \begin{block}{成功率过低问题}
+    尽管前期实验成功观察到错误密文输出，但电压毛刺故障注入的\red{成功率仅为0.1\%且表现不稳定}，显著低于TCHES\cite{TCHES:BozFocPal19}的STM32F3xx平台4\%成功率。这一差异表明当前攻击流程存在系统性问题。
+  \end{block}
+  
+  \begin{block}{形式化攻击模型}
+    建立了严格的理论分析框架。对手$\mathcal{A}$控制故障注入预言机$\mathcal{F}(t, \sigma, \phi, \alpha)$，参数化为时序$t$、目标计算域$\sigma$、注入机制$\phi$和强度$\alpha$。故障预言机以概率$P_{\text{fault}}(t, \sigma, \phi, \alpha)$诱导状态转换。
+  \end{block}
+\end{frame}
+
+\begin{frame}{参数优化策略失效分析}
+  \begin{block}{优化尝试结果}
+    \red{尝试应用参数优化策略\cite{TCHES:BozFocPal19}未能有效改善注入效率}，识别出现有方法在当前实验环境中的适用性限制。实现了半自动监督搜索策略：通过随机生成并插值描述候选毛刺波形的$(x,y)\sim (t,\alpha)$点集合，迭代选择参数区间内的随机样本。$\sigma$是软件指令计算，$\phi$是电压故障注入机制。
+  \end{block}
+  
+  \begin{block}{失效原因分析}
+    该策略在STM32F303实验中未达预期效果，\red{经过约100次迭代仍未发现有效参数组合}。由于监督搜索阶段的失效，依赖其输出作为初始种群基础的遗传算法全自动优化策略亦无法有效实施。
+  \end{block}
+
+    \begin{block}{固件重写诊断}
+    实验结果表明，\red{现有参数优化方法在当前实验环境中存在适用性限制}，需要深入分析故障注入失效的根本原因。计划通过重写F303固件暴露注入时的内部状态，进一步诊断故障注入成功率过低的技术问题。
+  \end{block}
+\end{frame}
+
+\begin{frame}{老师评语}
+  \begin{alertblock}{加快推进}
+  \end{alertblock}
+  
+  \begin{block}{下周计划}
+    1) 重写STM32F303固件暴露故障注入时的内部状态，诊断注入失效根本原因 \\
+    2) 完善故障攻击防护机制基础理论
+  \end{block}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+  \frametitle{参考文献}
+  \bibliographystyle{alpha}
+  \bibliography{../../paper/FourthPaper/tex/abbrev3,../../paper/FourthPaper/tex/crypto_custom}
+\end{frame}
+
+\end{document}
