@@ -1,0 +1,71 @@
+\documentclass{article}
+\usepackage{../../typesetting/styles/report-zh}
+\usepackage{threeparttable} % Add this package for tablenotes environment
+
+\setCJKmainfont{Noto Serif CJK SC} % Main Chinese font (Songti)
+\setCJKsansfont{Noto Sans CJK SC} % Sans-serif Chinese font
+\setCJKmonofont{Noto Sans Mono CJK SC} % Monospaced Chinese font (uncomment if needed)
+
+% Set document information
+\title{周报~向嘉豪 (\today)}
+\author{向嘉豪}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本周我们基于第四篇论文的研究进展，深入分析了故障注入攻击防护方向。通过对比分析相关工作的研究现状，我们识别了五个关键技术挑战：\red{故障注入参数优化的复杂性}、\blue{形式化验证的扩展性问题}、多重攻击向量的统一建模挑战、硬件软件协同设计的理论缺失，以及后量子时代的新挑战。基于现有的电压故障注入平台、FPGA设备，我们制定了分阶段的研究规划，重点突破中等复杂度问题，为解决SCA+VFA联合攻击防护和k-故障扩展性提供实践路径。
+\end{abstract}
+
+\begin{weekplan}
+1) 完成电压故障注入参数空间的系统性映射，建立参数-故障效果数据库
+2) 在FPGA平台上实现AES加密电路，开始k-故障的硬件验证实验
+\end{weekplan}
+
+\section{研究进展分析}
+
+\subsection{相关工作技术调研}
+
+\textbf{侧信道与故障攻击的联合防护}。\cite{COSADE:SahBagJapMuk21}在COSADE 2021上发表了针对SCA+SIFA联合攻击的防护方案分析，题为``Divided We Stand, United We Fall"。
+该工作深入分析了某些SCA+SIFA反措施在面对SCA增强的故障模板攻击时的安全性问题，\red{揭示了单独设计的防护措施在联合攻击下可能失效的关键问题}。
+Miškovský和Kubátová~\cite{IEEE-TVLSI:MisKub21}在IEEE TVLSI上提出了面积高效的掩码与故障容错架构，通过减少冗余度实现了安全性与硬件开销的平衡。Belenky等人~\cite{TCHES:BelBugAzr22}提出了RAMBAM方案，将乘法掩码与冗余机制结合，增强了AES实现的故障抗性。
+Ramezanpour等人~\cite{IEEE-TCAD:RamAmp20}提出了RS-MASK方案，作为针对功耗分析和故障分析的集成对策，\red{使用随机空间掩码技术同时抵御两类攻击}。
+
+\textbf{后量子密码学的故障攻击防护}。Howe等人~\cite{IEEE-HOST:HowKhaMarNor19}在IEEE HOST上提出了针对格基密码学中误差采样器的故障攻击对策。这项工作专门解决了后量子密码构造中的独特漏洞，\blue{为后量子时代的安全芯片设计提供了重要的理论基础}。
+
+
+\subsection{当前技术挑战与研究缺口}
+
+\textbf{故障注入参数优化的复杂性}。Krček和Ordas~\cite{ESORICS:KrcOrd24}的研究表明，\red{激光故障注入的参数空间极其庞大}，传统的穷举搜索方法效率低下。他们提出了基于遗传算法的多样性优化策略，但仍然面临收敛速度和全局最优解的挑战。同时，Toprakhisar等人~\cite{ESORICS:TopNikNik24}在ESORICS 2024上系统梳理了故障对手模型的参数化问题，强调了理论模型与实际攻击能力之间的差距。
+
+\textbf{形式化验证的扩展性问题}。Tollec等人~\cite{TCHES:THNABC24}在TCHES上发表的工作虽然建立了k-故障抗性分区的理论基础，但在复杂系统中的扩展性仍然有限。\blue{当系统规模增大时，状态空间爆炸问题变得严重}，需要开发更加高效的符号执行和模型检验技术。特别是对于现代处理器中包含的数百万门电路，现有方法的计算复杂度呈指数级增长，这是限制k-故障抗性分区实用化的核心瓶颈。
+
+\textbf{多重攻击向量的统一建模挑战}。现有研究往往独立考虑侧信道攻击和故障攻击的防护，对于两类攻击联合实施时的安全性分析相对薄弱。Saha等人~\cite{COSADE:SahBagJapMuk21}的工作``Divided We Stand, United We Fall"深刻揭示了这一问题：\red{许多单独设计的SCA+SIFA防护措施在面对联合攻击时会失效}。这表明我们需要从根本上重新思考安全防护的设计理念，建立真正统一的威胁模型。
+
+\textbf{硬件软件协同设计的理论缺失}。当前的硬件软件协同防护缺乏统一的理论框架。虽然如RS-MASK~\cite{IEEE-TCAD:RamAmp20}等方案试图同时抵御SCA和故障攻击，但这些方案主要基于经验设计，缺乏形式化的安全保证。\blue{我们需要建立能够跨越硬件和软件边界的统一安全分析方法}，以实现真正的端到端安全保证。
+
+\textbf{后量子时代的新挑战}。随着后量子密码学的广泛部署，传统的故障攻击防护方法面临新的挑战。Howe等人~\cite{IEEE-HOST:HowKhaMarNor19}针对格基密码的研究表明，后量子算法的独特结构引入了新的攻击面。特别是在误差采样和格运算过程中，\red{故障可能导致格结构的破坏，从而暴露私钥信息}。这要求我们重新审视和设计针对后量子密码的故障防护机制。
+
+\section{可行性分析与研究规划}
+
+\subsection{基于现有资源的可行性评估}
+
+\textbf{硬件实验能力}。我们拥有电压故障注入平台和FPGA设备，\blue{具备进行实际故障注入实验的硬件基础}。电压故障注入技术相对成熟，可以实现精确的时序控制，为验证理论结果提供实验支撑。虽然缺乏激光故障注入设备，但电压故障注入能够覆盖大部分基础攻击场景，\red{为参数优化算法的验证提供了充分的实验平台}。
+
+\textbf{软件开发能力}。具备中等程度的编程技能，能够开发所需的分析工具和实验软件。可以实现故障仿真器、分区算法、以及实验数据处理工具等关键软件组件。这种能力水平足以应对中等复杂度的技术挑战，特别是在故障传播建模和参数优化方面。
+
+
+\subsection{近期目标（未来1-2个月）}
+
+\textbf{电压故障注入参数空间映射}。基于现有的电压故障注入设备，系统性地探索和记录不同参数组合的故障效果。建立参数到故障结果的映射数据库，为后续的智能优化算法提供训练数据。重点改进时序控制精度和故障参数的自动化调节功能，\blue{直接响应参数优化复杂性的技术挑战}。
+
+\textbf{FPGA上的AES电路k-故障验证}。在FPGA平台上实现标准的AES加密电路，作为k-故障抗性理论的验证目标。通过实际硬件实现，验证3-故障安全性分析。
+
+\textbf{故障传播模型与SCA联合分析基础}。针对多重攻击向量统一建模挑战，开发能够同时考虑故障传播和侧信道泄露的基础分析框架。利用FPGA平台收集故障注入实验中的功耗特征，为后续的SCA+VFA联合防护研究奠定实验基础。
+
+% Replace standard bibliography commands with conditional version
+\printbibliographyifcited[alpha]{../../paper/FourthPaper/tex/abbrev3,../../paper/FourthPaper/tex/crypto_custom,../../paper/FourthPaper/tex/biblio}
+
+\end{document}
