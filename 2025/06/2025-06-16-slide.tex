@@ -1,0 +1,88 @@
+\documentclass{beamer}
+\usepackage{../../typesetting/styles/slide-zh}
+\usepackage{bookmark}
+
+\title{\LARGE{周报}}
+\subtitle{}
+\author{}
+\date{\today}
+
+
+\begin{document}
+
+% Title frame
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Outline frame
+\begin{frame}{大纲}
+  \tableofcontents
+\end{frame}
+
+\section{相关工作技术调研}
+\begin{frame}{侧信道与故障攻击的联合防护}
+  \begin{block}{联合攻击防护的关键问题}
+    Saha等人~\cite{COSADE:SahBagJapMuk21}在COSADE 2021上发表的"Divided We Stand, United We Fall"深入分析了SCA+SIFA反措施的安全性问题，\red{揭示了单独设计的防护措施在联合攻击下可能失效的关键问题}。
+  \end{block}
+  
+  \begin{block}{统一防护机制}
+    Miškovský和Kubátová~\cite{IEEE-TVLSI:MisKub21}提出了面积高效的掩码与故障容错架构，通过减少冗余度实现安全性与硬件开销的平衡。Belenky等人~\cite{TCHES:BelBugAzr22}的RAMBAM方案将乘法掩码与冗余机制结合，增强AES实现的故障抗性。
+  \end{block}
+
+  \begin{block}{集成对策方案}
+    Ramezanpour等人~\cite{IEEE-TCAD:RamAmp20}提出的RS-MASK方案作为针对功耗分析和故障分析的集成对策，\red{使用随机空间掩码技术同时抵御两类攻击}。
+  \end{block}
+\end{frame}
+
+\begin{frame}{后量子密码学的故障攻击防护}
+  \begin{block}{后量子时代的新挑战}
+    Howe等人~\cite{IEEE-HOST:HowKhaMarNor19}在IEEE TC上提出了针对格基密码学中误差采样器的故障攻击对策。这项工作专门解决了后量子密码构造中的独特漏洞，\blue{为后量子时代的安全芯片设计提供了重要的理论基础}。
+  \end{block}
+  
+  \begin{block}{格基密码的脆弱性}
+    后量子算法的独特结构引入了新的攻击面。特别是在误差采样和格运算过程中，\red{故障可能导致格结构的破坏，从而暴露私钥信息}，要求重新设计针对后量子密码的故障防护机制。
+  \end{block}
+\end{frame}
+
+\section{当前技术挑战与研究缺口}
+\begin{frame}{故障注入参数优化的复杂性}
+  \begin{block}{参数空间爆炸问题}
+    Krček和Ordas~\cite{ESORICS:KrcOrd24}的研究表明，\red{激光故障注入的参数空间极其庞大}，传统的穷举搜索方法效率低下。他们提出了基于遗传算法的多样性优化策略，但仍然面临收敛速度和全局最优解的挑战。
+  \end{block}
+  
+  \begin{block}{理论与实践的差距}
+    Toprakhisar等人~\cite{ESORICS:TopNikNik24}在ESORICS 2024上系统梳理了故障对手模型的参数化问题，强调了理论模型与实际攻击能力之间的差距。
+  \end{block}
+\end{frame}
+
+\begin{frame}{形式化验证的扩展性问题}
+  \begin{block}{状态空间爆炸挑战}
+    Tollec等人~\cite{TCHES:THNABC24}在TCHES上建立了k-故障抗性分区的理论基础，但在复杂系统中的扩展性仍然有限。\blue{当系统规模增大时，状态空间爆炸问题变得严重}，需要开发更加高效的符号执行和模型检验技术。
+  \end{block}
+  
+  \begin{block}{实用化瓶颈}
+    对于现代处理器中包含的数百万门电路，现有方法的计算复杂度呈指数级增长，\red{这是限制k-故障抗性分区实用化的核心瓶颈}。
+  \end{block}
+\end{frame}
+
+\begin{frame}{多重攻击向量的统一建模挑战}
+  \begin{block}{联合攻击的威胁}
+    现有研究往往独立考虑侧信道攻击和故障攻击的防护，对于两类攻击联合实施时的安全性分析相对薄弱。Saha等人~\cite{COSADE:SahBagJapMuk21}的工作深刻揭示了这一问题：\red{许多单独设计的SCA+SIFA防护措施在面对联合攻击时会失效}。
+  \end{block}
+\end{frame}
+
+
+\begin{frame}{老师评语}
+    \begin{alertblock}{再看看最新顶刊论文，做后量子是可以的}
+      往\red{后量子算法}\blue{实现}方向深入调研
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+  \frametitle{参考文献}
+  \bibliographystyle{alpha}
+  \bibliography{../../paper/FourthPaper/tex/abbrev3,../../paper/FourthPaper/tex/crypto_custom,../../paper/FourthPaper/tex/biblio}
+\end{frame}
+
+\end{document}
