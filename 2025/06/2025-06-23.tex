@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage{../../typesetting/styles/report-zh}
+\usepackage{threeparttable} % Add this package for tablenotes environment
+
+\setCJKmainfont{Noto Serif CJK SC} % Main Chinese font (Songti)
+\setCJKsansfont{Noto Sans CJK SC} % Sans-serif Chinese font
+\setCJKmonofont{Noto Sans Mono CJK SC} % Monospaced Chinese font (uncomment if needed)
+
+% Set document information
+\title{周报~向嘉豪 (\today)}
+\author{向嘉豪}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本周报告分析了后量子密码学（PQC）算法标准化现状，重点关注数字签名算法（DSA）在网络协议迁移中面临的技术挑战。通过对NIST标准化进程、协议迁移测试结果以及相关研究工作的系统性分析，确定了ML-DSA与MQTT协议结合作为物联网环境下后量子签名算法研究的主要方向。其中，\red{后量子签名算法的大签名尺寸是协议迁移的主要瓶颈}，而物联网协议的资源约束环境进一步放大算法优化实现的研究意义。
+\end{abstract}
+
+\begin{weekplan}
+1) 制定ML-DSA在MQTT协议中的实现优化研究计划
+\end{weekplan}
+
+\section{研究进展分析}
+
+\subsection{后量子密码学标准化现状}
+
+NIST后量子密码学标准化进程已基本完成，形成了两大类核心算法标准。在密钥封装机制（KEM）方面，\blue{FIPS 203（ML-KEM）基于CRYSTALS-Kyber已于2024年正式发布}，为密钥交换提供了标准化解决方案。数字签名算法（DSA）领域则包含三个标准：FIPS 204（ML-DSA）基于CRYSTALS-Dilithium、FIPS 205（SLH-DSA）基于SPHINCS+，以及正在开发中的FIPS 206（FN-DSA）基于FALCON，预计2025年夏季发布。
+
+2025年3月的重要进展包括HQC算法被选中进行标准化以及14个第二轮On-Ramp签名候选算法的确定。这些发展表明后量子密码学正从理论研究转向实际部署阶段，但同时也暴露出算法多样性带来的选择复杂性。
+重要的是，\red{旧签名和密钥封装算法标准将于2035年废止，迫切需要向后量子安全算法迁移}。
+
+\subsection{协议迁移技术挑战分析}
+
+基于NCCoE SP 1800-38C的协议迁移测试结果，\red{数字签名算法(DSA)迁移比密钥交换迁移面临更严峻的挑战}。关键发现包括：
+
+在TLS 1.3协议中，Kyber密钥交换显示出优异的性能表现，Kyber-768实现了681次握手/秒的吞吐量，与经典P384算法的223次握手/秒相比具有明显优势。然而，后量子签名算法的大尺寸特性带来了显著的网络开销。\blue{Dilithium证书大小达到18-22 KB，在QUIC协议中触发了额外的往返传输}，导致放大保护机制启动和拥塞控制窗口限制。
+
+SSH协议由于其多轮传输设计，对后量子签名的性能影响相对较小。但在认证支持方面，当时测试中仅有OQS-OpenSSH提供了后量子认证功能，显示出实现生态系统的不成熟。
+
+\subsection{DSA算法与协议适配性评估}
+
+通过对三种标准化DSA算法的深入分析，发现各算法在不同应用场景下的适用性存在显著差异：
+
+ML-DSA（FIPS 204）作为NIST的主要推荐算法，在性能和安全性之间提供了良好的平衡。\blue{GPU加速研究显示cuML-DSA在服务器GPU上实现了170.7×到294.2×的性能提升}，通过深度优先稀疏三元多项式乘法优化和分支消除方法，为高吞吐量服务器环境提供了可行的解决方案。
+
+FN-DSA（FIPS 206）虽然提供最小的签名尺寸和快速验证，但面临严重的安全挑战。\red{2025年发现的Rowhammer攻击显示单个比特翻转可以通过数亿次签名恢复完整密钥}，浮点运算敏感性和侧信道漏洞进一步限制了其实际部署的安全性。
+
+SLH-DSA（FIPS 205）基于哈希函数的保守安全基础，但其\red{极大的签名尺寸和较慢的签名速度限制了实际应用场景}。硬件加速研究显示SLotH实现可达到300×的性能提升，但仍难以满足高频次签名需求和资源受限环境。
+
+\subsection{ML-DSA与MQTT协议研究方向确定}
+
+经过综合评估，确定ML-DSA与MQTT协议结合作为主要研究方向，基于以下关键考虑：
+
+\textbf{算法选择理由：}ML-DSA作为NIST主要推荐的后量子签名算法，具有相对成熟的安全分析和实现基础。其在GPU加速方面的研究进展为服务器端优化提供了参考，同时其模格假设相比其他算法具有更好的理论基础。
+
+\textbf{协议选择理由：}物联网环境下的MQTT协议迁移研究相对不足，\red{现有研究主要集中在KEM-MQTT实现上，直接的ML-DSA与IoT协议集成研究几乎空白}。2025年的KEM-MQTT研究在8位AVR设备上优化实现，并发表于最新25-CCS（CCF-A）安全顶会，证明了在资源受限环境下实现后量子安全的研究价值。
+
+\textbf{研究机会识别：}物联网设备的资源约束特性为算法优化提供了独特的研究机会。现有的嵌入式系统研究（如pqm4基准测试框架）为ML-DSA在ARM Cortex-M4上的性能评估提供了基础，但缺乏针对IoT协议的专门优化。侧信道安全研究显示了在微控制器上实现安全ML-DSA的挑战和对策，为安全实现提供了指导。
+
+\textbf{实际应用价值：}随着IoT设备数量的快速增长和量子计算威胁的逐步现实化，\blue{为资源受限的IoT环境提供量子安全的认证机制具有重要的实际意义}。传统的证书链方法在IoT环境下面临带宽和存储限制，需要创新的轻量级认证策略，也是未来研究的方向之一。
+
+% Replace standard bibliography commands with conditional version
+\printbibliographyifcited[alpha]{../../paper/FourthPaper/tex/abbrev3,../../paper/FourthPaper/tex/biblio}
+
+\end{document}
