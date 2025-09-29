@@ -3,8 +3,7 @@
 // Chinese font configuration
 #set text(
   font: (
-    "Noto Serif CJK SC",
-    "Noto Sans CJK SC",
+    "Source Han Serif SC",
   ),
   lang: "zh",
   region: "cn",
