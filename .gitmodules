@@ -9,7 +9,7 @@
 	url = git@github.com:jiahaoxiang2000/typesetting.git
 [submodule "paper/FourthPaper"]
 	path = paper/FourthPaper
-	url = git@github.com:jiahaoxiang2000/deeper-paper.git
+	url = https://github.com/jiahaoxiang2000/deeper-paper.git
 [submodule ".claude"]
 	path = .claude
 	url = git@github.com:jiahaoxiang2000/claude-conf.git
