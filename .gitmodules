@@ -4,9 +4,6 @@
 [submodule ".github/prompts"]
 	path = .github/prompts
 	url = git@github.com:jiahaoxiang2000/prompts.git
-[submodule "typesetting"]
-	path = typesetting
-	url = git@github.com:jiahaoxiang2000/typesetting.git
 [submodule "paper/FourthPaper"]
 	path = paper/FourthPaper
 	url = https://github.com/jiahaoxiang2000/deeper-paper.git
@@ -19,3 +16,6 @@
 [submodule "paper/big_paper"]
 	path = paper/big_paper
 	url = git@github.com:jiahaoxiang2000/big_paper.git
+[submodule "typesetting"]
+	path = typesetting
+	url = https://github.com/jiahaoxiang2000/typesetting.git
