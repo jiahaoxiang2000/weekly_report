@@ -15,7 +15,7 @@
 	url = https://github.com/jiahaoxiang2000/SecondPaper.git
 [submodule "paper/big_paper"]
 	path = paper/big_paper
-	url = git@github.com:jiahaoxiang2000/big_paper.git
+	url = https://github.com/jiahaoxiang2000/big_paper.git
 [submodule "typesetting"]
 	path = typesetting
 	url = https://github.com/jiahaoxiang2000/typesetting.git
